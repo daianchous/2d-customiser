@@ -1,0 +1,2676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Wrap Customizer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #f5f5f5;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            width: 100%;
+            height: 72px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            width: 100%;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            flex: 1;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(245, 245, 245, 0.6);
+            text-decoration: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            outline: none;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: rgba(245, 245, 245, 0.9);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-link:focus {
+            outline: 2px solid rgba(255, 255, 255, 0.3);
+            outline-offset: 2px;
+        }
+
+        .nav-link.active {
+            color: #ffffff;
+            background: #000000;
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: rgba(245, 245, 245, 0.7);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.125rem;
+        }
+
+        .header-icon:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(245, 245, 245, 0.9);
+        }
+
+        .user-account {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .user-account:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-account:focus {
+            outline: 2px solid rgba(255, 255, 255, 0.3);
+            outline-offset: 2px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #f5f5f5;
+        }
+
+        /* Main Container */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 480px;
+            height: calc(100vh - 72px);
+            margin-top: 72px;
+            max-width: 1920px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Left: 3D Viewer */
+        .viewer-section {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vehicle-dropdown {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+        }
+
+        .dropdown-trigger {
+            padding: 0.875rem 1.5rem;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.875rem;
+            color: #ffffff;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .dropdown-trigger:hover {
+            background: rgba(0, 0, 0, 0.85);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .dropdown-icon {
+            transition: transform 0.2s;
+        }
+
+        .dropdown-trigger.open .dropdown-icon {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 0.75rem);
+            left: 0;
+            min-width: 360px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+            padding: 0.75rem;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .dropdown-menu.open {
+            display: block;
+        }
+
+        .vehicle-category {
+            margin-bottom: 0.5rem;
+        }
+
+        .category-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .vehicle-option {
+            padding: 0.875rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .vehicle-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .vehicle-option.active {
+            background: rgba(147, 51, 234, 0.12);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+        }
+
+        .vehicle-option:focus {
+            outline: 2px solid #9333ea;
+            outline-offset: 2px;
+        }
+
+        .vehicle-icon {
+            font-size: 1.5rem;
+        }
+
+        .vehicle-info .name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .vehicle-info .type {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        #canvas-container {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Color overlay over the Sketchfab viewer, roughly matching the phone case shape */
+        #viewer-color-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+            opacity: 0.75;
+            background: #f5f5f5;
+            transition: background 0.2s ease, opacity 0.2s ease;
+        }
+
+        /* Right: Control Panel */
+        .control-section {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            background: #0a0a0a;
+            border-left: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* Fixed Pricing */
+        .pricing-fixed {
+            padding: 2rem;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .price-display {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-amount {
+            font-size: 2.75rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+        }
+
+        .price-label {
+            font-size: 0.875rem;
+            color: rgba(245, 245, 245, 0.5);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .price-details-toggle {
+            background: none;
+            border: none;
+            color: rgba(245, 245, 245, 0.7);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+        }
+
+        .price-details-toggle:hover {
+            color: rgba(245, 245, 245, 0.9);
+        }
+
+        .price-details-toggle:focus {
+            outline: 2px solid #9333ea;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        .price-breakdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .price-breakdown.open {
+            max-height: 400px;
+        }
+
+        .price-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.625rem 0;
+            font-size: 0.875rem;
+            color: rgba(245, 245, 245, 0.7);
+            font-weight: 500;
+        }
+
+        .price-line .amount {
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Scrollable Customization */
+        .customization-panel {
+            overflow-y: auto;
+            padding: 2rem;
+            max-height: calc(100vh - 72px - 200px);
+        }
+
+        .customization-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .customization-panel::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+
+        .customization-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .customization-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 0.8125rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: rgba(245, 245, 245, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 3px;
+            height: 16px;
+            background: rgba(245, 245, 245, 0.3);
+            border-radius: 2px;
+        }
+
+        /* Color Picker */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.625rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .color-swatch {
+            aspect-ratio: 1;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-swatch:focus {
+            outline: 2px solid rgba(255, 255, 255, 0.3);
+            outline-offset: 2px;
+        }
+
+        .color-swatch.active {
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15), 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Color Wheel Section */
+        .color-picker-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .color-picker-input {
+            width: 56px;
+            height: 56px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.875rem;
+            cursor: pointer;
+            background: none;
+            padding: 0;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .color-picker-input:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-picker-input::-webkit-color-swatch-wrapper {
+            padding: 0;
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        .color-picker-input::-webkit-color-swatch {
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        .color-picker-input::-moz-color-swatch {
+            border: none;
+            border-radius: 0.5rem;
+        }
+
+        .color-preview {
+            flex: 1;
+            height: 56px;
+            border-radius: 0.875rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #ffffff;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            padding: 0 1rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-preview:focus {
+            outline: 2px solid #9333ea;
+            outline-offset: 2px;
+            border-color: #9333ea;
+            background: rgba(147, 51, 234, 0.08);
+        }
+
+        .color-preview::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* CMYK Inputs */
+        .cmyk-inputs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .cmyk-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .cmyk-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(245, 245, 245, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.625rem;
+        }
+
+        .cmyk-input-group {
+            position: relative;
+        }
+
+        .cmyk-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.75rem;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .cmyk-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .cmyk-input-wrapper {
+            position: relative;
+        }
+
+        .cmyk-percent {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: rgba(245, 245, 245, 0.4);
+            pointer-events: none;
+            font-weight: 500;
+        }
+
+        /* Scale Control */
+        .scale-control {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .scale-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .scale-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .scale-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #9333ea;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(147, 51, 234, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scale-slider::-webkit-slider-thumb:hover {
+            background: #a855f7;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.6);
+            transform: scale(1.1);
+        }
+
+        .scale-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #9333ea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(147, 51, 234, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scale-slider::-moz-range-thumb:hover {
+            background: #a855f7;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.6);
+            transform: scale(1.1);
+        }
+
+        .scale-value {
+            min-width: 60px;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Scale Control in Viewer */
+        .viewer-scale-control {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 10;
+            padding: 1rem 1.25rem;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.875rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            min-width: 280px;
+        }
+
+        .viewer-scale-control .section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .viewer-scale-control .scale-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .viewer-scale-control .scale-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .viewer-scale-control .scale-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #9333ea;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(147, 51, 234, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .viewer-scale-control .scale-slider::-webkit-slider-thumb:hover {
+            background: #a855f7;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.6);
+            transform: scale(1.1);
+        }
+
+        .viewer-scale-control .scale-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #9333ea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(147, 51, 234, 0.4);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .viewer-scale-control .scale-slider::-moz-range-thumb:hover {
+            background: #a855f7;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.6);
+            transform: scale(1.1);
+        }
+
+        .viewer-scale-control .scale-value {
+            min-width: 50px;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.5rem;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* File Upload */
+        .file-upload-section {
+            border: 1px solid rgba(46, 46, 46, 1);
+            border-radius: 0.875rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .file-upload-section:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.5;
+        }
+
+        .upload-text {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.25rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .files-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+        }
+
+        .file-icon {
+            font-size: 1.25rem;
+        }
+
+        .file-name {
+            font-size: 0.9375rem;
+            color: rgba(245, 245, 245, 0.95);
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .file-delete {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            color: rgba(245, 245, 245, 0.8);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            line-height: 1;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .file-delete:hover {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: rgba(245, 245, 245, 1);
+        }
+
+        /* Quantity Selector */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.875rem;
+            padding: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .quantity-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.625rem;
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+
+        .quantity-btn:hover {
+            background: rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .quantity-btn:focus {
+            outline: 2px solid #9333ea;
+            outline-offset: 2px;
+        }
+
+        .quantity-value {
+            flex: 1;
+            text-align: center;
+            font-size: 1.375rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Button */
+        .btn-primary {
+            width: 100%;
+            padding: 1.125rem 1.5rem;
+            background: #000000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.875rem;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.02em;
+        }
+
+        .btn-primary:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:focus {
+            outline: 2px solid rgba(255, 255, 255, 0.3);
+            outline-offset: 2px;
+        }
+
+        /* Confirmation Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: none !important;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex !important;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(40px);
+        }
+
+        .modal-title {
+            font-size: 1.375rem;
+            font-weight: 700;
+            margin-bottom: 0.875rem;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .modal-text {
+            font-size: 0.9375rem;
+            color: rgba(245, 245, 245, 0.7);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(245, 245, 245, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-btn.cancel:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .modal-btn.cancel:focus {
+            outline: 2px solid rgba(229, 229, 229, 0.5);
+            outline-offset: 2px;
+        }
+
+        .modal-btn.confirm {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-btn.confirm:hover {
+            background: rgba(0, 0, 0, 0.9);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .modal-btn.confirm:focus {
+            outline: 2px solid #dc2626;
+            outline-offset: 2px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Finish Selector */
+        .finish-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .finish-option:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .finish-option input[type="radio"]:checked + span {
+            color: #9333ea;
+        }
+
+        .finish-option:has(input[type="radio"]:checked) {
+            background: rgba(147, 51, 234, 0.12);
+            border-color: rgba(147, 51, 234, 0.3);
+        }
+
+        .finish-option:focus-within {
+            outline: 2px solid #9333ea;
+            outline-offset: 2px;
+        }
+
+        /* Protected Wrap */
+        .protected-wrap-option {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            gap: 0.875rem;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0);
+            color: rgba(229, 229, 229, 1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.875rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .protected-wrap-option:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .protected-wrap-option:has(input[type="checkbox"]:checked) {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .protected-wrap-option:focus-within {
+            outline: 2px solid #9333ea;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-container">
+            <nav class="nav" role="navigation" aria-label="Main navigation">
+                <div class="logo" aria-label="Customizer logo">All in one customizer</div>
+                <div class="nav-links" role="list">
+                    <a href="#" class="nav-link" role="listitem" aria-label="Navigate to Models">Models</a>
+                    <a href="#" class="nav-link" role="listitem" aria-label="Navigate to Services">Services</a>
+                    <a href="#" class="nav-link" role="listitem" aria-label="Navigate to Experience">Experience</a>
+                    <a href="#" class="nav-link" role="listitem" aria-label="Navigate to Shop">Shop</a>
+                    <a href="#" class="nav-link" role="listitem" aria-label="Navigate to Purchase">Purchase</a>
+                    <a href="#" class="nav-link active" role="listitem" aria-label="Navigate to Customizer" aria-current="page">Customize</a>
+                </div>
+            </nav>
+            <div class="header-icons">
+                <button class="user-account" aria-label="User account menu" aria-haspopup="true">
+                    <div class="user-avatar" aria-hidden="true">JD</div>
+                    <span class="user-name">John Doe</span>
+                </button>
+                <div class="header-icon" aria-label="Menu">☰</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Left: 3D Viewer -->
+        <div class="viewer-section">
+            <!-- Vehicle Dropdown -->
+            <div class="vehicle-dropdown">
+                <button class="dropdown-trigger" onclick="toggleDropdown()" aria-haspopup="true" aria-expanded="false" aria-label="Select vehicle model">
+                    <span id="selected-vehicle">Cadillac CT4-V</span>
+                    <span class="dropdown-icon" aria-hidden="true">▼</span>
+                </button>
+                <div class="dropdown-menu" id="vehicle-menu" role="menu" aria-label="Vehicle selection menu">
+                    <div class="vehicle-category">
+                        <div class="category-title">Sedans</div>
+                        <div class="vehicle-option active" onclick="selectVehicle('Cadillac CT4-V', 'sedan')">
+                            <div class="vehicle-icon">🚗</div>
+                            <div class="vehicle-info">
+                                <div class="name">Cadillac CT4-V</div>
+                                <div class="type">Performance Sedan</div>
+                            </div>
+                        </div>
+                        <div class="vehicle-option" onclick="selectVehicle('BMW 5 Series', 'sedan')">
+                            <div class="vehicle-icon">🚗</div>
+                            <div class="vehicle-info">
+                                <div class="name">BMW 5 Series</div>
+                                <div class="type">Executive Sedan</div>
+                            </div>
+                        </div>
+                        <div class="vehicle-option" onclick="selectVehicle('Toyota Camry', 'sedan')">
+                            <div class="vehicle-icon">🚗</div>
+                            <div class="vehicle-info">
+                                <div class="name">Toyota Camry</div>
+                                <div class="type">Mid-size Sedan</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vehicle-category">
+                        <div class="category-title">Luxury</div>
+                        <div class="vehicle-option" onclick="selectVehicle('Rolls Royce Ghost', 'luxury')">
+                            <div class="vehicle-icon">👑</div>
+                            <div class="vehicle-info">
+                                <div class="name">Rolls Royce Ghost</div>
+                                <div class="type">Ultra Luxury Sedan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D Model Viewer (Sketchfab Embed with transparent background + color overlay) -->
+            <div id="canvas-container" style="position: relative; width: 100%; height: 100%; overflow: hidden;">
+                <div class="sketchfab-embed-wrapper" style="width: 100%; height: 100%;">
+                    <iframe
+                        title="iPhone 16 pro case"
+                        frameborder="0"
+                        allowfullscreen
+                        mozallowfullscreen="true"
+                        webkitallowfullscreen="true"
+                        allow="autoplay; fullscreen; xr-spatial-tracking"
+                        xr-spatial-tracking
+                        execution-while-out-of-viewport
+                        execution-while-not-rendered
+                        web-share
+                        src="https://sketchfab.com/models/4088ab267d1349eea92c405700b4babf/embed?autostart=1&transparent=1"
+                        style="width: 100%; height: 100%; border: 0;"
+                    ></iframe>
+                </div>
+                <!-- Color overlay controlled by the customizer panel -->
+                <div id="viewer-color-overlay"></div>
+            </div>
+
+            <!-- Model Scale Control -->
+            <div class="viewer-scale-control">
+                <div class="section-title">Model Scale</div>
+                <div class="scale-control">
+                    <div class="scale-slider-wrapper">
+                        <input type="range" id="scale-slider" class="scale-slider" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updateModelScale(this.value)" aria-label="Model scale">
+                        <div class="scale-value" id="scale-value">1.0x</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Controls -->
+        <div class="control-section">
+            <!-- Fixed Pricing -->
+            <div class="pricing-fixed">
+                <div class="price-display">
+                    <div class="price-amount" id="total-price">$500</div>
+                    <div class="price-label">total</div>
+                </div>
+                <button class="price-details-toggle" onclick="togglePriceBreakdown()" aria-expanded="false" aria-controls="price-breakdown" aria-label="Toggle price breakdown">
+                    <span id="breakdown-text">Show breakdown</span>
+                    <span id="breakdown-arrow" aria-hidden="true">▼</span>
+                </button>
+                <div class="price-breakdown" id="price-breakdown" role="region" aria-label="Price breakdown">
+                    <div class="price-line">
+                        <span>Base wrap</span>
+                        <span class="amount" id="base-price">$500</span>
+                    </div>
+                    <div class="price-line" id="files-line" style="display: none;">
+                        <span>File printing (<span id="file-count">0</span>)</span>
+                        <span class="amount" id="files-price">$0</span>
+                    </div>
+                    <div class="price-line" id="protected-wrap-line" style="display: none;">
+                        <span>Protected wrap</span>
+                        <span class="amount" id="protected-wrap-price">$0</span>
+                    </div>
+                    <div class="price-line" style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 0.75rem; margin-top: 0.5rem;">
+                        <span>× <span id="quantity-display">1</span> vehicle<span id="plural-s"></span></span>
+                        <span class="amount"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable Customization -->
+            <div class="customization-panel">
+                <!-- CMYK Inputs -->
+                <div class="section">
+                    <h3 class="section-title">CMYK Values</h3>
+                    <div class="cmyk-inputs">
+                        <div class="cmyk-input-group">
+                            <label class="cmyk-label">Cyan</label>
+                            <div class="cmyk-input-wrapper">
+                                <input type="number" id="cmyk-c" class="cmyk-input" min="0" max="100" value="0" oninput="updateColorFromCMYK()" aria-label="Cyan percentage">
+                                <span class="cmyk-percent" aria-hidden="true">%</span>
+                            </div>
+                        </div>
+                        <div class="cmyk-input-group">
+                            <label class="cmyk-label">Magenta</label>
+                            <div class="cmyk-input-wrapper">
+                                <input type="number" id="cmyk-m" class="cmyk-input" min="0" max="100" value="0" oninput="updateColorFromCMYK()" aria-label="Magenta percentage">
+                                <span class="cmyk-percent" aria-hidden="true">%</span>
+                            </div>
+                        </div>
+                        <div class="cmyk-input-group">
+                            <label class="cmyk-label">Yellow</label>
+                            <div class="cmyk-input-wrapper">
+                                <input type="number" id="cmyk-y" class="cmyk-input" min="0" max="100" value="0" oninput="updateColorFromCMYK()" aria-label="Yellow percentage">
+                                <span class="cmyk-percent" aria-hidden="true">%</span>
+                            </div>
+                        </div>
+                        <div class="cmyk-input-group">
+                            <label class="cmyk-label">Black</label>
+                            <div class="cmyk-input-wrapper">
+                                <input type="number" id="cmyk-k" class="cmyk-input" min="0" max="100" value="4" oninput="updateColorFromCMYK()" aria-label="Black percentage">
+                                <span class="cmyk-percent" aria-hidden="true">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color -->
+                <div class="section">
+                    <h3 class="section-title">Wrap Color</h3>
+                    
+                    <!-- Color Wheel / Picker -->
+                    <div class="color-picker-section">
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="color-picker" class="color-picker-input" value="#f5f5f5" oninput="updateColorFromPicker(this.value)" aria-label="Color picker">
+                            <input type="text" id="color-preview" class="color-preview" value="#F5F5F5" placeholder="#FFFFFF" oninput="updateColorFromHex(this.value)" style="background: #f5f5f5;" aria-label="Color hex code">
+                        </div>
+                    </div>
+
+                    <!-- Subtle Color Swatches -->
+                    <div class="color-grid">
+                        <button type="button" class="color-swatch active" style="background: #f5f5f5; border: none; padding: 0;" onclick="setColor('#f5f5f5', this)" aria-label="Select white color"></button>
+                        <button type="button" class="color-swatch" style="background: #2a2a2a; border: none; padding: 0;" onclick="setColor('#2a2a2a', this)" aria-label="Select dark grey color"></button>
+                        <button type="button" class="color-swatch" style="background: #c8a882; border: none; padding: 0;" onclick="setColor('#c8a882', this)" aria-label="Select beige color"></button>
+                        <button type="button" class="color-swatch" style="background: #9ca3af; border: none; padding: 0;" onclick="setColor('#9ca3af', this)" aria-label="Select grey color"></button>
+                        <button type="button" class="color-swatch" style="background: #a78bfa; border: none; padding: 0;" onclick="setColor('#a78bfa', this)" aria-label="Select purple color"></button>
+                        <button type="button" class="color-swatch" style="background: #60a5fa; border: none; padding: 0;" onclick="setColor('#60a5fa', this)" aria-label="Select blue color"></button>
+                        <button type="button" class="color-swatch" style="background: #34d399; border: none; padding: 0;" onclick="setColor('#34d399', this)" aria-label="Select green color"></button>
+                        <button type="button" class="color-swatch" style="background: #fbbf24; border: none; padding: 0;" onclick="setColor('#fbbf24', this)" aria-label="Select yellow color"></button>
+                        <button type="button" class="color-swatch" style="background: #fb7185; border: none; padding: 0;" onclick="setColor('#fb7185', this)" aria-label="Select pink color"></button>
+                        <button type="button" class="color-swatch" style="background: #64748b; border: none; padding: 0;" onclick="setColor('#64748b', this)" aria-label="Select slate color"></button>
+                        <button type="button" class="color-swatch" style="background: #94a3b8; border: none; padding: 0;" onclick="setColor('#94a3b8', this)" aria-label="Select light slate color"></button>
+                        <button type="button" class="color-swatch" style="background: #d1d5db; border: none; padding: 0;" onclick="setColor('#d1d5db', this)" aria-label="Select light grey color"></button>
+                    </div>
+
+                    <!-- Finish Selector -->
+                    <div class="color-picker-section">
+                        <h4 style="font-size: 0.75rem; font-weight: 600; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Finish</h4>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <label class="finish-option">
+                                <input type="radio" name="finish" value="matt" id="finish-matt" checked onchange="updateFinish('matt')" style="cursor: pointer; accent-color: #9333ea;" aria-label="Matt finish">
+                                <span style="font-size: 0.875rem; font-weight: 500;">Matt</span>
+                            </label>
+                            <label class="finish-option">
+                                <input type="radio" name="finish" value="glossy" id="finish-glossy" onchange="updateFinish('glossy')" style="cursor: pointer; accent-color: #9333ea;" aria-label="Glossy finish">
+                                <span style="font-size: 0.875rem; font-weight: 500;">Glossy</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Protected Wrap Option -->
+                    <label class="protected-wrap-option">
+                        <input type="checkbox" id="protected-wrap" onchange="updateProtectedWrap(this.checked)" style="width: 18px; height: 18px; cursor: pointer; accent-color: #9333ea;" aria-label="Add protected wrap layer for additional protection">
+                        <div style="flex: 1;">
+                            <div style="font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">Protected Wrap</div>
+                            <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5);">Additional protection layer (+$200)</div>
+                        </div>
+                    </label>
+
+                </div>
+
+                <!-- File Upload -->
+                <div class="section">
+                    <h3 class="section-title">Upload Files (Max 5)</h3>
+                    <button type="button" class="file-upload-section" onclick="document.getElementById('file-input').click()" style="width: 100%; background: transparent; cursor: pointer;" aria-label="Upload files">
+                        <div class="upload-icon" aria-hidden="true">📁</div>
+                        <div class="upload-text">Click to upload files</div>
+                        <div class="upload-subtext">PNG, JPG, PDF up to 10MB each</div>
+                    </button>
+                    <input type="file" id="file-input" accept="image/*" multiple style="display: none;" onchange="handleFileUpload(event)">
+                    <div class="files-list" id="files-list"></div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="section">
+                    <h3 class="section-title">Number of Vehicles</h3>
+                    <div class="quantity-selector">
+                        <button class="quantity-btn" onclick="decrementQuantity()" aria-label="Decrease quantity">−</button>
+                        <div class="quantity-value" id="quantity" aria-live="polite" aria-atomic="true">1</div>
+                        <button class="quantity-btn" onclick="incrementQuantity()" aria-label="Increase quantity">+</button>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <button class="btn-primary">Request Approval</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal">
+            <h3 class="modal-title">Delete File?</h3>
+            <p class="modal-text">Are you sure you want to remove this file? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="cancelDelete()">Cancel</button>
+                <button class="modal-btn confirm" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let state = {
+            vehicleType: 'sedan',
+            vehicleName: 'Cadillac CT4-V',
+            color: '#f5f5f5',
+            files: [],
+            quantity: 1,
+            finish: 'matt',
+            protectedWrap: false
+        };
+
+        let fileToDelete = null;
+
+        // Vehicle to model file mapping
+        const vehicleModels = {
+            'Cadillac CT4-V': 'Cadillac CT4 V 2022.glb',
+            'Rolls Royce Ghost': 'Rolls Royce Ghost.glb'
+        };
+
+        // Three.js (legacy local viewer - no longer used for the Sketchfab embed)
+        let scene, camera, renderer, car;
+        let decals = []; // Store decal objects for text and images
+        let uploadedTextures = []; // Store uploaded image textures
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        let baseScale = 1.0; // Store the base scale of the model
+        let selectedDecal = null; // Currently selected decal for positioning
+        let isPositioning = false; // Whether user is in positioning mode
+        let positioningTextureId = null; // ID of texture being positioned
+        let isPositioningImage = false; // Whether user is currently dragging to position image
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+
+            camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(5, 2, 5);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Lighting - Enhanced for car showcase
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            mainLight.position.set(10, 10, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            mainLight.shadow.camera.near = 0.5;
+            mainLight.shadow.camera.far = 50;
+            scene.add(mainLight);
+
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.4);
+            fillLight.position.set(-5, 5, -5);
+            scene.add(fillLight);
+            
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            rimLight.position.set(0, 3, -10);
+            scene.add(rimLight);
+
+            // Load vehicle model or create fallback
+            if (vehicleModels[state.vehicleName]) {
+                loadVehicleModel(vehicleModels[state.vehicleName]);
+            } else {
+                createFallbackCar();
+            }
+
+            // Animation
+            let autoRotate = true;
+            function animate() {
+                requestAnimationFrame(animate);
+                if (car && autoRotate) {
+                    car.rotation.y += 0.003;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Mouse interaction
+            let isDragging = false;
+            let previousX = 0;
+            
+            // Attach events to the canvas element (renderer.domElement) for better event capture
+            const canvas = renderer.domElement;
+            
+            canvas.addEventListener('mousedown', (e) => {
+                console.log('🖱️ mousedown on canvas:', { isPositioning, positioningTextureId, shiftKey: e.shiftKey });
+                if (isPositioning && positioningTextureId !== null && !e.shiftKey) {
+                    // User is positioning an image - handle click on 3D model
+                    // Shift key allows rotation even in positioning mode
+                    isPositioningImage = true;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('📍 Starting image positioning drag');
+                    handleImagePositioning(e);
+                } else {
+                    // Normal rotation (or rotation while holding Shift in positioning mode)
+                    isDragging = true;
+                    previousX = e.clientX;
+                    autoRotate = false;
+                }
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (isPositioningImage && isPositioning && positioningTextureId !== null && !e.shiftKey) {
+                    // Update image position while dragging
+                    e.preventDefault();
+                    handleImagePositioning(e);
+                } else if (isDragging && car) {
+                    const deltaX = e.clientX - previousX;
+                    car.rotation.y += deltaX * 0.01;
+                    previousX = e.clientX;
+                }
+            });
+
+            canvas.addEventListener('mouseup', (e) => {
+                if (isPositioningImage) {
+                    isPositioningImage = false;
+                    console.log('🖱️ mouseup - positioning ended');
+                } else {
+                    isDragging = false;
+                    setTimeout(() => { autoRotate = true; }, 2000);
+                }
+            });
+            
+            // Also attach to container as fallback
+            container.addEventListener('mousedown', (e) => {
+                if (isPositioning && positioningTextureId !== null && !e.shiftKey) {
+                    isPositioningImage = true;
+                    e.preventDefault();
+                    handleImagePositioning(e);
+                }
+            });
+
+            // Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        }
+
+        function loadVehicleModel(modelFile = null) {
+            // Check if GLTFLoader is available
+            if (typeof THREE.GLTFLoader === 'undefined') {
+                console.error('GLTFLoader is not available. Using fallback geometry.');
+                createFallbackCar();
+                return;
+            }
+            
+            // Determine which model file to load
+            const modelFilename = modelFile || vehicleModels[state.vehicleName] || 'Cadillac CT4 V 2022.glb';
+            
+            // Load GLB model
+            const loader = new THREE.GLTFLoader();
+            loader.load(modelFilename, 
+                    (gltf) => {
+                        if (car) {
+                            // Remove old decals
+                            decals.forEach(decal => scene.remove(decal));
+                            decals = [];
+                            scene.remove(car);
+                        }
+                        car = gltf.scene;
+                        
+                        // Calculate bounding box to center and scale model
+                        const box = new THREE.Box3().setFromObject(car);
+                        const center = box.getCenter(new THREE.Vector3());
+                        const size = box.getSize(new THREE.Vector3());
+                        
+                        // Scale to fit nicely in view
+                        const maxDim = Math.max(size.x, size.y, size.z);
+                        const scale = 2.5 / maxDim;
+                        baseScale = scale; // Store the base scale
+                        car.scale.set(scale, scale, scale);
+                        
+                        // Center the model at origin after scaling
+                        // First get the new bounding box after scaling
+                        const scaledBox = new THREE.Box3().setFromObject(car);
+                        const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
+                        
+                        // Move model to center it at origin
+                        car.position.x = -scaledCenter.x;
+                        car.position.y = -scaledCenter.y + 0.5; // Slight lift above ground
+                        car.position.z = -scaledCenter.z;
+                        
+                        car.rotation.y = Math.PI / 4; // Slight angle for better view
+                        
+                        // Store reference to car body meshes for decals
+                        car.userData.bodyMeshes = [];
+                        // Store materials that should be colored
+                        car.userData.colorableMaterials = [];
+                        
+                        // Apply color and enable shadows
+                        car.traverse((child) => {
+                            if (child.isMesh) {
+                                child.castShadow = true;
+                                child.receiveShadow = true;
+                                
+                                // Store body meshes (for decal application)
+                                if (child.material) {
+                                    // Handle both single materials and material arrays
+                                    const materials = Array.isArray(child.material) ? child.material : [child.material];
+                                    
+                                    materials.forEach((material, index) => {
+                                        if (material) {
+                                            // Store original material properties
+                                            if (!child.userData.originalColor) {
+                                                child.userData.originalColor = material.color ? material.color.clone() : null;
+                                            }
+                                            if (child.userData.originalMetalness === undefined) {
+                                                child.userData.originalMetalness = material.metalness;
+                                                child.userData.originalRoughness = material.roughness;
+                                            }
+                                            
+                                            // Apply wrap color to main body parts (not glass/chrome)
+                                            // Skip transparent materials (glass, windows)
+                                            if (!material.transparent) {
+                                                // Skip highly metallic materials (chrome, mirrors) - same threshold as updateCarColor
+                                                const isChrome = material.metalness !== undefined && material.metalness >= 0.95;
+                                                
+                                                // Color all non-chrome, non-transparent materials
+                                                if (!isChrome) {
+                                                    const colorObj = new THREE.Color(state.color);
+                                                    material.color.copy(colorObj);
+                                                    material.needsUpdate = true;
+                                                    
+                                                    // Store this material reference for direct updates
+                                                    car.userData.colorableMaterials.push(material);
+                                                    
+                                                    // Mark this mesh as colorable for future updates
+                                                    child.userData.isColorable = true;
+                                                    
+                                                    // Store body meshes for decal placement (only once)
+                                                    if (!car.userData.bodyMeshes.includes(child)) {
+                                                        car.userData.bodyMeshes.push(child);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        
+                        scene.add(car);
+                        addGround();
+                        
+                        // Reset scale slider to 1.0 when model loads
+                        const scaleSlider = document.getElementById('scale-slider');
+                        if (scaleSlider) {
+                            scaleSlider.value = '1.0';
+                            updateModelScale('1.0');
+                        }
+                        
+                        // Ensure white color is applied to all materials
+                        updateCarColor();
+                        
+                        // Apply existing customizations
+                        applyImagesToModel();
+                    },
+                    (progress) => {
+                        console.log('Loading: ' + (progress.loaded / progress.total * 100) + '%');
+                    },
+                    (error) => {
+                        console.error('GLB loading failed:', error);
+                        console.log('Using fallback geometry');
+                        createFallbackCar();
+                    }
+                );
+        }
+
+        function createFallbackCar() {
+            if (car) {
+                // Remove old decals
+                decals.forEach(decal => scene.remove(decal));
+                decals = [];
+                scene.remove(car);
+            }
+            
+            car = new THREE.Group();
+            car.userData.bodyMeshes = [];
+            const color = new THREE.Color(state.color);
+
+            createSedan(car, color);
+
+            // Center the fallback car and set rotation
+            const box = new THREE.Box3().setFromObject(car);
+            const center = box.getCenter(new THREE.Vector3());
+            car.position.x = -center.x;
+            car.position.y = -center.y + 0.5; // Slight lift above ground
+            car.position.z = -center.z;
+            car.rotation.y = Math.PI / 4; // Slight angle for better view
+            
+            // Fallback car uses default scale of 1.0
+            baseScale = 1.0;
+
+            scene.add(car);
+            
+            // Reset scale slider to 1.0 when fallback car is created
+            const scaleSlider = document.getElementById('scale-slider');
+            if (scaleSlider) {
+                scaleSlider.value = '1.0';
+                updateModelScale('1.0');
+            }
+            
+            // Ensure white color is applied to all materials
+            updateCarColor();
+            
+            // Apply existing customizations
+            applyImagesToModel();
+        }
+
+        function createSedan(group, color) {
+            const bodyMaterial = new THREE.MeshStandardMaterial({ 
+                color: color,
+                metalness: 0.5,
+                roughness: 0.4
+            });
+
+            const body = new THREE.Mesh(
+                new THREE.BoxGeometry(4, 1.2, 1.8),
+                bodyMaterial
+            );
+            body.position.y = 0.6;
+            body.castShadow = true;
+            body.receiveShadow = true;
+            body.userData.isColorable = true;
+            group.add(body);
+            group.mainBody = body;
+            if (group.userData && group.userData.bodyMeshes) {
+                group.userData.bodyMeshes.push(body);
+            }
+
+            const roof = new THREE.Mesh(
+                new THREE.BoxGeometry(2, 0.9, 1.6),
+                bodyMaterial
+            );
+            roof.position.y = 1.45;
+            roof.castShadow = true;
+            roof.userData.isColorable = true;
+            group.add(roof);
+
+            addWheels(group, 0.35, 2.8);
+            addGround();
+        }
+
+        function addWheels(group, radius, spacing) {
+            const wheelMaterial = new THREE.MeshStandardMaterial({ 
+                color: 0x1a1a1a,
+                metalness: 0.6,
+                roughness: 0.4
+            });
+
+            const positions = [
+                [spacing/2, radius - 0.4, 1.2],
+                [spacing/2, radius - 0.4, -1.2],
+                [-spacing/2, radius - 0.4, 1.2],
+                [-spacing/2, radius - 0.4, -1.2]
+            ];
+
+            positions.forEach(pos => {
+                const wheel = new THREE.Mesh(
+                    new THREE.CylinderGeometry(radius, radius, 0.35, 24),
+                    wheelMaterial
+                );
+                wheel.position.set(pos[0], pos[1], pos[2]);
+                wheel.rotation.z = Math.PI / 2;
+                wheel.castShadow = true;
+                group.add(wheel);
+            });
+        }
+
+        function addGround() {
+            if (scene.getObjectByName('ground')) return;
+            
+            const ground = new THREE.Mesh(
+                new THREE.CircleGeometry(25, 64),
+                new THREE.MeshStandardMaterial({ 
+                    color: 0x000000,
+                    metalness: 0.1,
+                    roughness: 0.9
+                })
+            );
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -0.4;
+            ground.receiveShadow = true;
+            ground.name = 'ground';
+            scene.add(ground);
+
+            const shadowPlane = new THREE.Mesh(
+                new THREE.PlaneGeometry(40, 40),
+                new THREE.ShadowMaterial({ opacity: 0.3 })
+            );
+            shadowPlane.rotation.x = -Math.PI / 2;
+            shadowPlane.position.y = -0.39;
+            shadowPlane.receiveShadow = true;
+            scene.add(shadowPlane);
+        }
+
+        function updateCarColor() {
+            // Drive the viewer overlay based on the selected wrap color + finish
+            const overlay = document.getElementById('viewer-color-overlay');
+            if (!overlay) return;
+
+            overlay.style.background = state.color;
+
+            // Matt = stronger tint, Glossy = lighter tint
+            const isMatt = state.finish === 'matt';
+            overlay.style.opacity = isMatt ? 0.85 : 0.55;
+        }
+
+        // Create text texture from canvas
+
+        // Handle image positioning on 3D model
+        function handleImagePositioning(event) {
+            if (!car || !isPositioning || positioningTextureId === null) {
+                console.log('❌ Positioning check failed:', { car: !!car, isPositioning, positioningTextureId });
+                return;
+            }
+            
+            const container = document.getElementById('canvas-container');
+            if (!container) {
+                console.log('❌ Container not found');
+                return;
+            }
+            
+            const rect = container.getBoundingClientRect();
+            
+            // Calculate mouse position in normalized device coordinates (-1 to +1)
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            
+            console.log('🖱️ Mouse position:', { x: mouse.x, y: mouse.y, clientX: event.clientX, clientY: event.clientY });
+            
+            // Update raycaster
+            raycaster.setFromCamera(mouse, camera);
+            
+            // Collect all meshes from the car, excluding decals
+            const meshesToCheck = [];
+            
+            // First try body meshes
+            if (car.userData && car.userData.bodyMeshes && car.userData.bodyMeshes.length > 0) {
+                car.userData.bodyMeshes.forEach(mesh => {
+                    if (mesh && mesh.isMesh && (!mesh.userData || !mesh.userData.isImage)) {
+                        meshesToCheck.push(mesh);
+                    }
+                });
+            }
+            
+            // If no body meshes found, traverse the car to find all meshes
+            if (meshesToCheck.length === 0 && car.traverse) {
+                car.traverse((child) => {
+                    if (child.isMesh && (!child.userData || !child.userData.isImage)) {
+                        // Skip ground and shadow planes
+                        if (child.name !== 'ground' && !(child.material && child.material.type === 'ShadowMaterial')) {
+                            meshesToCheck.push(child);
+                        }
+                    }
+                });
+            }
+            
+            // If still no meshes, try intersecting with the entire car
+            let intersects = [];
+            if (meshesToCheck.length > 0) {
+                intersects = raycaster.intersectObjects(meshesToCheck, true);
+                console.log('🔍 Raycast with meshesToCheck:', { meshCount: meshesToCheck.length, intersects: intersects.length });
+            } else {
+                // Fallback: intersect with entire car scene
+                intersects = raycaster.intersectObject(car, true);
+                // Filter out decals
+                intersects = intersects.filter(intersect => {
+                    const obj = intersect.object;
+                    return !obj.userData || !obj.userData.isImage;
+                });
+                console.log('🔍 Raycast with entire car:', { intersects: intersects.length });
+            }
+            
+            if (intersects.length > 0) {
+                console.log('✅ Intersection found!');
+                const intersection = intersects[0];
+                const point = intersection.point;
+                let normal = intersection.face.normal.clone();
+                
+                // Transform normal to world space
+                if (intersection.object.matrixWorld) {
+                    normal.transformDirection(intersection.object.matrixWorld);
+                }
+                normal.normalize();
+                
+                // Find the texture data and update its position
+                const textureData = uploadedTextures.find(t => String(t.id) === String(positioningTextureId));
+                if (textureData) {
+                    console.log('📦 Texture data found, updating position');
+                    // Store position and normal for proper orientation
+                    textureData.position = point.clone();
+                    textureData.normal = normal.clone();
+                    
+                    // Update the decal position
+                    const decal = decals.find(d => d.userData.isImage && String(d.userData.textureId) === String(positioningTextureId));
+                    if (decal) {
+                        console.log('🎨 Decal found, updating position to:', point);
+                        // Position decal slightly above surface
+                        const offsetPoint = point.clone().add(normal.multiplyScalar(0.01));
+                        decal.position.copy(offsetPoint);
+                        
+                        // Orient decal to face along normal
+                        const lookAtPoint = offsetPoint.clone().add(normal);
+                        decal.lookAt(lookAtPoint);
+                        decal.rotation.y += Math.PI;
+                    } else {
+                        console.log('❌ Decal not found for textureId:', positioningTextureId, 'Available decals:', decals.map(d => d.userData.textureId));
+                    }
+                } else {
+                    console.log('❌ Texture data not found for id:', positioningTextureId, 'Available textures:', uploadedTextures.map(t => t.id));
+                }
+            } else {
+                console.log('❌ No intersections found');
+            }
+        }
+
+        // Start positioning mode for an image
+        function startImagePositioning(textureId) {
+            console.log('🎯 startImagePositioning called with textureId:', textureId);
+            if (!car) {
+                alert('Please wait for the car model to load before positioning images.');
+                return;
+            }
+            
+            // Convert textureId to string for consistent comparison
+            const textureIdStr = String(textureId);
+            
+            isPositioning = true;
+            positioningTextureId = textureIdStr;
+            
+            console.log('✅ Positioning mode activated:', { isPositioning, positioningTextureId, car: !!car });
+            
+            // Highlight the selected image
+            applyImagesToModel();
+            
+            // Update UI to show positioning mode
+            renderFilesList();
+            
+            // Show instruction
+            showPositioningHint(true);
+            
+            // Add a visual indicator on the canvas
+            const container = document.getElementById('canvas-container');
+            if (container) {
+                container.style.cursor = 'crosshair';
+            }
+        }
+
+        // Stop positioning mode
+        function stopImagePositioning() {
+            console.log('🛑 Stopping image positioning');
+            isPositioning = false;
+            positioningTextureId = null;
+            isPositioningImage = false;
+            
+            // Reset cursor
+            const container = document.getElementById('canvas-container');
+            if (container) {
+                container.style.cursor = '';
+            }
+            
+            // Update UI
+            renderFilesList();
+            
+            // Reapply images to remove positioning highlight
+            applyImagesToModel();
+            
+            // Hide instruction
+            showPositioningHint(false);
+        }
+        
+        // Make functions globally accessible
+        window.startImagePositioning = startImagePositioning;
+        window.stopImagePositioning = stopImagePositioning;
+
+        // Show/hide positioning hint
+        function showPositioningHint(show) {
+            let hint = document.getElementById('positioning-hint');
+            if (show && !hint) {
+                hint = document.createElement('div');
+                hint.id = 'positioning-hint';
+                hint.style.cssText = `
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(10, 10, 15, 0.95);
+                    backdrop-filter: blur(20px);
+                    border: 2px solid #9333ea;
+                    border-radius: 1rem;
+                    padding: 1.5rem 2rem;
+                    z-index: 1000;
+                    pointer-events: none;
+                    font-size: 1rem;
+                    color: #ffffff;
+                    text-align: center;
+                `;
+                hint.innerHTML = `
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">Positioning Image</div>
+                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Click and drag on the car to position the image</div>
+                    <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-top: 0.5rem;">Hold Shift to rotate the car • Press ESC to cancel</div>
+                `;
+                document.getElementById('canvas-container').appendChild(hint);
+            } else if (!show && hint) {
+                hint.remove();
+            }
+        }
+
+        // Apply uploaded images as decals
+        function applyImagesToModel() {
+            if (!car || uploadedTextures.length === 0) {
+                // Remove existing image decals
+                decals.forEach(decal => {
+                    if (decal.userData.isImage) {
+                        scene.remove(decal);
+                        decals = decals.filter(d => d !== decal);
+                    }
+                });
+                return;
+            }
+
+            // Remove existing image decals
+            decals.forEach(decal => {
+                if (decal.userData.isImage) {
+                    scene.remove(decal);
+                }
+            });
+            decals = decals.filter(d => !d.userData.isImage);
+
+            if (!car.userData.bodyMeshes || car.userData.bodyMeshes.length === 0) return;
+
+            const targetMesh = car.userData.bodyMeshes[0];
+            if (!targetMesh) return;
+
+            const box = new THREE.Box3().setFromObject(targetMesh);
+            const size = box.getSize(new THREE.Vector3());
+            const center = box.getCenter(new THREE.Vector3());
+
+            // Apply each uploaded image
+            uploadedTextures.forEach((textureData, index) => {
+                const texture = textureData.texture;
+                const decalSize = new THREE.Vector3(size.x * 0.4, size.y * 0.4, 0.1);
+                
+                // Use stored position if available, otherwise calculate default position
+                let decalPosition;
+                if (textureData.position) {
+                    decalPosition = textureData.position.clone();
+                } else {
+                    // Distribute images across car surface
+                    const offsetX = (index % 2 === 0 ? -1 : 1) * size.x * 0.25;
+                    const offsetY = Math.floor(index / 2) * size.y * 0.3;
+                    decalPosition = new THREE.Vector3(
+                        center.x + offsetX,
+                        center.y + offsetY,
+                        center.z + size.z * 0.5
+                    );
+                    // Store default position
+                    textureData.position = decalPosition.clone();
+                }
+
+                const decalMaterial = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    transparent: true,
+                    opacity: String(textureData.id) === String(positioningTextureId) ? 0.7 : 0.95,
+                    depthTest: true,
+                    depthWrite: false,
+                    polygonOffset: true,
+                    polygonOffsetFactor: -4
+                });
+
+                const decalGeometry = new THREE.PlaneGeometry(decalSize.x, decalSize.y);
+                const decal = new THREE.Mesh(decalGeometry, decalMaterial);
+                
+                // Use stored normal if available (from positioning), otherwise calculate
+                let normal;
+                if (textureData.normal) {
+                    normal = textureData.normal.clone();
+                    // Position decal slightly above surface
+                    const offsetPoint = decalPosition.clone().add(normal.multiplyScalar(0.01));
+                    decal.position.copy(offsetPoint);
+                } else {
+                    // Default position
+                    decal.position.copy(decalPosition);
+                    
+                    // Try to find surface normal using raycasting
+                    if (car.userData.bodyMeshes && car.userData.bodyMeshes.length > 0) {
+                        const meshesToCheck = car.userData.bodyMeshes.filter(mesh => {
+                            return mesh.userData && !mesh.userData.isImage;
+                        });
+                        
+                        // Cast ray from camera through decal position to find surface
+                        const cameraDirection = new THREE.Vector3();
+                        camera.getWorldDirection(cameraDirection);
+                        const rayOrigin = decalPosition.clone().add(cameraDirection.multiplyScalar(-10));
+                        
+                        raycaster.set(rayOrigin, cameraDirection);
+                        const intersects = raycaster.intersectObjects(meshesToCheck, true);
+                        
+                        if (intersects.length > 0) {
+                            const intersection = intersects[0];
+                            normal = intersection.face.normal.clone();
+                            normal.transformDirection(intersection.object.matrixWorld);
+                            // Store for future use
+                            textureData.normal = normal.clone();
+                            // Adjust position to be on surface
+                            decal.position.copy(intersection.point);
+                            decal.position.add(normal.multiplyScalar(0.01));
+                        } else {
+                            // Fallback: use default normal
+                            normal = new THREE.Vector3(0, 0, 1);
+                        }
+                    } else {
+                        normal = new THREE.Vector3(0, 0, 1);
+                    }
+                }
+                
+                // Orient decal to face along normal
+                decal.lookAt(decal.position.clone().add(normal));
+                decal.rotation.y += Math.PI;
+                
+                decal.userData.isImage = true;
+                decal.userData.textureId = textureData.id;
+                decals.push(decal);
+                scene.add(decal);
+            });
+        }
+
+        // UI Functions
+        function toggleDropdown() {
+            const menu = document.getElementById('vehicle-menu');
+            const trigger = document.querySelector('.dropdown-trigger');
+            const isOpen = menu.classList.toggle('open');
+            trigger.classList.toggle('open', isOpen);
+            trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+
+        function selectVehicle(name, type) {
+            state.vehicleName = name;
+            state.vehicleType = type;
+            document.getElementById('selected-vehicle').textContent = name;
+            document.querySelectorAll('.vehicle-option').forEach(opt => opt.classList.remove('active'));
+            event.target.closest('.vehicle-option').classList.add('active');
+            document.getElementById('vehicle-menu').classList.remove('open');
+            document.querySelector('.dropdown-trigger').classList.remove('open');
+            
+            // Check if this vehicle has a 3D model file
+            if (vehicleModels[name]) {
+                loadVehicleModel(vehicleModels[name]);
+            } else {
+                // Use fallback geometry for vehicles without models
+                createFallbackCar();
+            }
+        }
+
+        // Color conversion functions
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + [r, g, b].map(x => {
+                const hex = Math.round(x).toString(16);
+                return hex.length === 1 ? "0" + hex : hex;
+            }).join("");
+        }
+
+        function rgbToCmyk(r, g, b) {
+            r = r / 255;
+            g = g / 255;
+            b = b / 255;
+            
+            const k = 1 - Math.max(r, g, b);
+            if (k === 1) {
+                return { c: 0, m: 0, y: 0, k: 100 };
+            }
+            
+            const c = ((1 - r - k) / (1 - k)) * 100;
+            const m = ((1 - g - k) / (1 - k)) * 100;
+            const y = ((1 - b - k) / (1 - k)) * 100;
+            
+            return {
+                c: Math.round(c),
+                m: Math.round(m),
+                y: Math.round(y),
+                k: Math.round(k * 100)
+            };
+        }
+
+        function cmykToRgb(c, m, y, k) {
+            c = c / 100;
+            m = m / 100;
+            y = y / 100;
+            k = k / 100;
+            
+            const r = 255 * (1 - c) * (1 - k);
+            const g = 255 * (1 - m) * (1 - k);
+            const b = 255 * (1 - y) * (1 - k);
+            
+            return {
+                r: Math.round(r),
+                g: Math.round(g),
+                b: Math.round(b)
+            };
+        }
+
+        function getLuminance(r, g, b) {
+            // Calculate relative luminance
+            const [rs, gs, bs] = [r, g, b].map(val => {
+                val = val / 255;
+                return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+            });
+            return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+        }
+
+        function updateColorFromPicker(hexColor) {
+            state.color = hexColor;
+            updateColorUI(hexColor, null);
+            updateCarColor();
+        }
+
+        function updateColorFromHex(hexValue) {
+            // Validate and format hex color
+            let hex = hexValue.trim();
+            if (!hex.startsWith('#')) {
+                hex = '#' + hex;
+            }
+            // Validate hex format (3 or 6 characters after #)
+            if (/^#[0-9A-Fa-f]{3}$/.test(hex) || /^#[0-9A-Fa-f]{6}$/.test(hex)) {
+                state.color = hex;
+                updateColorUI(hex, null, true);
+                updateCarColor();
+            }
+        }
+
+        function updateColorFromCMYK() {
+            const c = parseInt(document.getElementById('cmyk-c').value) || 0;
+            const m = parseInt(document.getElementById('cmyk-m').value) || 0;
+            const y = parseInt(document.getElementById('cmyk-y').value) || 0;
+            const k = parseInt(document.getElementById('cmyk-k').value) || 0;
+            
+            const rgb = cmykToRgb(c, m, y, k);
+            const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+            
+            state.color = hex;
+            updateColorUI(hex, null, false); // Don't update CMYK inputs (we're setting from them)
+            updateCarColor();
+        }
+
+        function updateColorUI(hexColor, activeElement, updateCMYK = true) {
+            // Update color picker
+            document.getElementById('color-picker').value = hexColor;
+            
+            // Update preview input
+            const preview = document.getElementById('color-preview');
+            preview.style.background = hexColor;
+            preview.value = hexColor.toUpperCase();
+            
+            // Adjust text color for readability
+            const rgb = hexToRgb(hexColor);
+            if (rgb) {
+                const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
+                preview.style.color = luminance > 0.5 ? '#000000' : '#ffffff';
+            }
+            
+            // Update CMYK inputs if needed
+            if (updateCMYK) {
+                const rgb = hexToRgb(hexColor);
+                if (rgb) {
+                    const cmyk = rgbToCmyk(rgb.r, rgb.g, rgb.b);
+                    document.getElementById('cmyk-c').value = cmyk.c;
+                    document.getElementById('cmyk-m').value = cmyk.m;
+                    document.getElementById('cmyk-y').value = cmyk.y;
+                    document.getElementById('cmyk-k').value = cmyk.k;
+                }
+            }
+            
+            // Update active swatch
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+            if (activeElement) {
+                activeElement.classList.add('active');
+            } else {
+                // Find matching swatch by comparing hex values
+                const swatches = document.querySelectorAll('.color-swatch');
+                const targetRgb = hexToRgb(hexColor);
+                if (targetRgb) {
+                    swatches.forEach(swatch => {
+                        const bgColor = swatch.style.background;
+                        // Handle rgb() format
+                        const rgbMatch = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                        if (rgbMatch) {
+                            const swatchR = parseInt(rgbMatch[1]);
+                            const swatchG = parseInt(rgbMatch[2]);
+                            const swatchB = parseInt(rgbMatch[3]);
+                            // Allow small tolerance for color matching
+                            if (Math.abs(swatchR - targetRgb.r) < 3 &&
+                                Math.abs(swatchG - targetRgb.g) < 3 &&
+                                Math.abs(swatchB - targetRgb.b) < 3) {
+                                swatch.classList.add('active');
+                            }
+                        } else {
+                            // Handle hex format
+                            const hexMatch = bgColor.match(/#[0-9a-fA-F]{6}/);
+                            if (hexMatch && hexMatch[0].toLowerCase() === hexColor.toLowerCase()) {
+                                swatch.classList.add('active');
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        function setColor(color, element) {
+            console.log('setColor called:', color);
+            state.color = color;
+            updateColorUI(color, element);
+            // Update the car color
+            console.log('Calling updateCarColor, car exists:', !!car);
+            updateCarColor();
+        }
+
+        function handleFileUpload(event) {
+            const newFiles = Array.from(event.target.files);
+            const availableSlots = 5 - state.files.length;
+            
+            if (newFiles.length > availableSlots) {
+                alert(`You can only upload ${availableSlots} more file(s). Maximum is 5 files.`);
+                newFiles.splice(availableSlots);
+            }
+            
+            newFiles.forEach(file => {
+                if (state.files.length < 5 && file.type.startsWith('image/')) {
+                    const fileId = Date.now() + Math.random();
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const texture = new THREE.Texture(img);
+                            texture.needsUpdate = true;
+                            texture.flipY = false;
+                            
+                            uploadedTextures.push({
+                                id: fileId,
+                                texture: texture,
+                                file: file
+                            });
+                            
+                            state.files.push({
+                                name: file.name,
+                                id: fileId
+                            });
+                            
+                            renderFilesList();
+                            updatePricing();
+                            applyImagesToModel();
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                } else if (state.files.length < 5) {
+                    // Non-image files (like PDF) - just store metadata
+                    state.files.push({
+                        name: file.name,
+                        id: Date.now() + Math.random()
+                    });
+                    renderFilesList();
+                    updatePricing();
+                }
+            });
+            
+            event.target.value = '';
+        }
+
+        function renderFilesList() {
+            const listEl = document.getElementById('files-list');
+            if (state.files.length === 0) {
+                listEl.innerHTML = '';
+                return;
+            }
+            
+            // Clear and rebuild list
+            listEl.innerHTML = '';
+            
+            state.files.forEach((file, index) => {
+                const textureData = uploadedTextures.find(t => String(t.id) === String(file.id));
+                const isImage = textureData !== undefined;
+                const isPositioning = String(positioningTextureId) === String(file.id);
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                if (isPositioning) {
+                    fileItem.style.border = '2px solid #9333ea';
+                    fileItem.style.background = 'rgba(147, 51, 234, 0.12)';
+                }
+                
+                const fileInfo = document.createElement('div');
+                fileInfo.className = 'file-info';
+                fileInfo.innerHTML = `
+                    <div class="file-icon">${isImage ? '🖼️' : '📄'}</div>
+                    <div class="file-name">${file.name}</div>
+                `;
+                fileItem.appendChild(fileInfo);
+                
+                const actionsDiv = document.createElement('div');
+                actionsDiv.style.cssText = 'display: flex; gap: 0.5rem; align-items: center;';
+                
+                if (isImage) {
+                    const positionBtn = document.createElement('button');
+                    positionBtn.className = 'file-position';
+                    positionBtn.title = 'Position on 3D model';
+                    positionBtn.textContent = '🎯';
+                    positionBtn.style.cssText = `
+                        width: 28px;
+                        height: 28px;
+                        background: ${isPositioning ? 'rgba(147, 51, 234, 0.25)' : 'rgba(147, 51, 234, 0.12)'};
+                        border: 1px solid rgba(147, 51, 234, 0.3);
+                        border-radius: 0.375rem;
+                        color: #9333ea;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1rem;
+                        line-height: 1;
+                        transition: all 0.2s;
+                    `;
+                    positionBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        startImagePositioning(file.id);
+                    });
+                    actionsDiv.appendChild(positionBtn);
+                    
+                    if (isPositioning) {
+                        const stopBtn = document.createElement('button');
+                        stopBtn.className = 'file-position-stop';
+                        stopBtn.title = 'Stop positioning';
+                        stopBtn.textContent = '✕';
+                        stopBtn.style.cssText = `
+                            width: 28px;
+                            height: 28px;
+                            background: rgba(239, 68, 68, 0.15);
+                            border: 1px solid rgba(239, 68, 68, 0.3);
+                            border-radius: 0.375rem;
+                            color: #ef4444;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 0.875rem;
+                            line-height: 1;
+                            transition: all 0.2s;
+                        `;
+                        stopBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            stopImagePositioning();
+                        });
+                        actionsDiv.appendChild(stopBtn);
+                    }
+                }
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'file-delete';
+                deleteBtn.textContent = '×';
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showDeleteConfirmation(index);
+                });
+                actionsDiv.appendChild(deleteBtn);
+                
+                fileItem.appendChild(actionsDiv);
+                listEl.appendChild(fileItem);
+            });
+        }
+
+        function showDeleteConfirmation(index) {
+            fileToDelete = index;
+            document.getElementById('delete-modal').classList.add('show');
+        }
+
+        function cancelDelete() {
+            fileToDelete = null;
+            document.getElementById('delete-modal').classList.remove('show');
+        }
+
+        function confirmDelete() {
+            if (fileToDelete !== null) {
+                const deletedFile = state.files[fileToDelete];
+                
+                // Stop positioning if deleting the file being positioned
+                if (positioningTextureId === deletedFile.id) {
+                    stopImagePositioning();
+                }
+                
+                state.files.splice(fileToDelete, 1);
+                
+                // Remove corresponding texture
+                uploadedTextures = uploadedTextures.filter(tex => tex.id !== deletedFile.id);
+                
+                fileToDelete = null;
+                renderFilesList();
+                updatePricing();
+                applyImagesToModel();
+            }
+            document.getElementById('delete-modal').classList.remove('show');
+        }
+
+
+        function updateModelScale(scaleMultiplier) {
+            if (!car) return;
+            
+            const newScale = baseScale * parseFloat(scaleMultiplier);
+            car.scale.set(newScale, newScale, newScale);
+            
+            // Update the scale value display
+            const scaleValueEl = document.getElementById('scale-value');
+            if (scaleValueEl) {
+                scaleValueEl.textContent = parseFloat(scaleMultiplier).toFixed(1) + 'x';
+            }
+        }
+
+        function updateFinish(finish) {
+            state.finish = finish;
+            // Update visual styling based on finish (could affect material properties)
+            updateCarColor();
+        }
+
+        function updateProtectedWrap(enabled) {
+            state.protectedWrap = enabled;
+            updatePricing();
+        }
+
+        function incrementQuantity() {
+            if (state.quantity < 20) {
+                state.quantity++;
+                document.getElementById('quantity').textContent = state.quantity;
+                updatePricing();
+            }
+        }
+
+        function decrementQuantity() {
+            if (state.quantity > 1) {
+                state.quantity--;
+                document.getElementById('quantity').textContent = state.quantity;
+                updatePricing();
+            }
+        }
+
+        function togglePriceBreakdown() {
+            const breakdown = document.getElementById('price-breakdown');
+            const arrow = document.getElementById('breakdown-arrow');
+            const text = document.getElementById('breakdown-text');
+            const button = document.querySelector('.price-details-toggle');
+            
+            const isOpen = breakdown.classList.toggle('open');
+            button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            
+            if (isOpen) {
+                arrow.textContent = '▲';
+                text.textContent = 'Hide breakdown';
+            } else {
+                arrow.textContent = '▼';
+                text.textContent = 'Show breakdown';
+            }
+        }
+
+        function updatePricing() {
+            const basePrice = 500;
+            const filesPrice = state.files.length * 100;
+            const protectedWrapPrice = state.protectedWrap ? 200 : 0;
+
+            const perVehicle = basePrice + filesPrice + protectedWrapPrice;
+            const total = perVehicle * state.quantity;
+
+            document.getElementById('base-price').textContent = '$' + basePrice;
+            
+            document.getElementById('files-line').style.display = state.files.length > 0 ? 'flex' : 'none';
+            document.getElementById('file-count').textContent = state.files.length;
+            document.getElementById('files-price').textContent = '$' + filesPrice;
+            
+            document.getElementById('protected-wrap-line').style.display = protectedWrapPrice > 0 ? 'flex' : 'none';
+            document.getElementById('protected-wrap-price').textContent = '$' + protectedWrapPrice;
+            
+            document.getElementById('quantity-display').textContent = state.quantity;
+            document.getElementById('plural-s').textContent = state.quantity > 1 ? 's' : '';
+            document.getElementById('total-price').textContent = '$' + total.toLocaleString();
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.querySelector('.vehicle-dropdown');
+            if (!dropdown.contains(e.target)) {
+                document.getElementById('vehicle-menu').classList.remove('open');
+                document.querySelector('.dropdown-trigger').classList.remove('open');
+            }
+        });
+
+        // Close modal on overlay click
+        document.getElementById('delete-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'delete-modal') {
+                cancelDelete();
+            }
+        });
+
+        // ESC key to stop image positioning
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isPositioning) {
+                stopImagePositioning();
+            }
+        });
+
+        // Global error handling for browser extensions and unhandled promises
+        window.addEventListener('error', function(e) {
+            // Ignore errors from browser extensions (giveFreely, etc.)
+            if (e.filename && (e.filename.includes('extension://') || e.filename.includes('giveFreely'))) {
+                e.preventDefault();
+                return true;
+            }
+        }, true);
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            // Suppress unhandled promise rejections from browser extensions
+            if (e.reason && e.reason.toString && e.reason.toString().includes('giveFreely')) {
+                e.preventDefault();
+                return true;
+            }
+        });
+
+        // Initialize pricing (3D viewer is handled by the Sketchfab iframe embed)
+        updatePricing();
+        
+        // Initialize color UI with default color
+        updateColorUI('#f5f5f5', document.querySelector('.color-swatch.active'));
+        
+        // Ensure modal is hidden on page load
+        const modal = document.getElementById('delete-modal');
+        if (modal) {
+            modal.setAttribute('aria-hidden', 'true');
+            modal.classList.remove('show');
+        }
+    </script>
+</body>
+</html>
