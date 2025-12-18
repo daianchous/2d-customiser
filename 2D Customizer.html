@@ -1268,7 +1268,7 @@
             outline-offset: 0;
             border-radius: 0;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -1338,17 +1338,20 @@
             outline: 2px solid #3a3a3a;
             outline-offset: 0;
             border-radius: 0;
-            padding: 1rem;
+            padding: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 400px;
+            height: 200px;
+            max-height: 200px;
+            overflow: hidden;
         }
 
         .order-preview-svg {
-            width: 100%;
-            max-width: 300px;
+            width: auto;
             height: auto;
+            max-width: 100px;
+            max-height: 176px;
         }
 
         .order-preview-price-breakdown {
@@ -1414,7 +1417,7 @@
             border-top: 2px solid #3a3a3a;
             background: #1a1a1a;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 0.75rem;
         }
 
@@ -1537,14 +1540,14 @@
         <div class="viewer-section">
             <!-- Vehicle Dropdown -->
             <div class="vehicle-dropdown">
-                <button class="dropdown-trigger" onclick="toggleDropdown()" aria-haspopup="true" aria-expanded="false" aria-label="Select object template">
+                <button class="dropdown-trigger"  aria-haspopup="true" aria-expanded="false" aria-label="Select object template">
                     <span id="selected-vehicle">Phone Case</span>
                     <span class="dropdown-icon" aria-hidden="true">▼</span>
                 </button>
                 <div class="dropdown-menu" id="vehicle-menu" role="menu" aria-label="Object selection menu">
                     <div class="vehicle-category">
                         <div class="category-title">2D Objects</div>
-                        <div class="vehicle-option active" onclick="selectVehicle('Phone Case', 'phonecase')">
+                        <div class="vehicle-option active" data-vehicle-name="Phone Case" data-vehicle-type="phonecase">
                             <div class="vehicle-icon">📱</div>
                             <div class="vehicle-info">
                                 <div class="name">Phone Case</div>
@@ -1572,7 +1575,7 @@
                     <div class="price-amount" id="total-price">$20</div>
                     <div class="price-label">total</div>
                 </div>
-                <button class="price-details-toggle" onclick="togglePriceBreakdown()" aria-expanded="false" aria-controls="price-breakdown" aria-label="Toggle price breakdown">
+                <button class="price-details-toggle"  aria-expanded="false" aria-controls="price-breakdown" aria-label="Toggle price breakdown">
                     <span id="breakdown-text">Show breakdown</span>
                     <span id="breakdown-arrow" aria-hidden="true">▼</span>
                 </button>
@@ -1656,40 +1659,40 @@
                     <!-- Subtle Color Swatches -->
                     <div class="color-grid">
                         <!-- Row 1: Basic Colors -->
-                        <button type="button" class="color-swatch active" style="background: #f5f5f5; border: none; padding: 0;" onclick="setColor('#f5f5f5', this)" aria-label="Select white color"></button>
-                        <button type="button" class="color-swatch" style="background: #2a2a2a; border: none; padding: 0;" onclick="setColor('#2a2a2a', this)" aria-label="Select dark grey color"></button>
-                        <button type="button" class="color-swatch" style="background: #c8a882; border: none; padding: 0;" onclick="setColor('#c8a882', this)" aria-label="Select beige color"></button>
-                        <button type="button" class="color-swatch" style="background: #9ca3af; border: none; padding: 0;" onclick="setColor('#9ca3af', this)" aria-label="Select grey color"></button>
-                        <button type="button" class="color-swatch" style="background: #a78bfa; border: none; padding: 0;" onclick="setColor('#a78bfa', this)" aria-label="Select purple color"></button>
-                        <button type="button" class="color-swatch" style="background: #60a5fa; border: none; padding: 0;" onclick="setColor('#60a5fa', this)" aria-label="Select blue color"></button>
+                        <button type="button" class="color-swatch active" style="background: #f5f5f5; border: none; padding: 0;" data-color="#f5f5f5" aria-label="Select white color"></button>
+                        <button type="button" class="color-swatch" style="background: #2a2a2a; border: none; padding: 0;" data-color="#2a2a2a" aria-label="Select dark grey color"></button>
+                        <button type="button" class="color-swatch" style="background: #c8a882; border: none; padding: 0;" data-color="#c8a882" aria-label="Select beige color"></button>
+                        <button type="button" class="color-swatch" style="background: #9ca3af; border: none; padding: 0;" data-color="#9ca3af" aria-label="Select grey color"></button>
+                        <button type="button" class="color-swatch" style="background: #a78bfa; border: none; padding: 0;" data-color="#a78bfa" aria-label="Select purple color"></button>
+                        <button type="button" class="color-swatch" style="background: #60a5fa; border: none; padding: 0;" data-color="#60a5fa" aria-label="Select blue color"></button>
                         <!-- Row 2: Vibrant Colors -->
-                        <button type="button" class="color-swatch" style="background: #34d399; border: none; padding: 0;" onclick="setColor('#34d399', this)" aria-label="Select green color"></button>
-                        <button type="button" class="color-swatch" style="background: #fbbf24; border: none; padding: 0;" onclick="setColor('#fbbf24', this)" aria-label="Select yellow color"></button>
-                        <button type="button" class="color-swatch" style="background: #fb7185; border: none; padding: 0;" onclick="setColor('#fb7185', this)" aria-label="Select pink color"></button>
-                        <button type="button" class="color-swatch" style="background: #64748b; border: none; padding: 0;" onclick="setColor('#64748b', this)" aria-label="Select slate color"></button>
-                        <button type="button" class="color-swatch" style="background: #94a3b8; border: none; padding: 0;" onclick="setColor('#94a3b8', this)" aria-label="Select light slate color"></button>
-                        <button type="button" class="color-swatch" style="background: #d1d5db; border: none; padding: 0;" onclick="setColor('#d1d5db', this)" aria-label="Select light grey color"></button>
+                        <button type="button" class="color-swatch" style="background: #34d399; border: none; padding: 0;" data-color="#34d399" aria-label="Select green color"></button>
+                        <button type="button" class="color-swatch" style="background: #fbbf24; border: none; padding: 0;" data-color="#fbbf24" aria-label="Select yellow color"></button>
+                        <button type="button" class="color-swatch" style="background: #fb7185; border: none; padding: 0;" data-color="#fb7185" aria-label="Select pink color"></button>
+                        <button type="button" class="color-swatch" style="background: #64748b; border: none; padding: 0;" data-color="#64748b" aria-label="Select slate color"></button>
+                        <button type="button" class="color-swatch" style="background: #94a3b8; border: none; padding: 0;" data-color="#94a3b8" aria-label="Select light slate color"></button>
+                        <button type="button" class="color-swatch" style="background: #d1d5db; border: none; padding: 0;" data-color="#d1d5db" aria-label="Select light grey color"></button>
                         <!-- Row 3: Additional Colors -->
-                        <button type="button" class="color-swatch" style="background: #ef4444; border: none; padding: 0;" onclick="setColor('#ef4444', this)" aria-label="Select red color"></button>
-                        <button type="button" class="color-swatch" style="background: #f97316; border: none; padding: 0;" onclick="setColor('#f97316', this)" aria-label="Select orange color"></button>
-                        <button type="button" class="color-swatch" style="background: #eab308; border: none; padding: 0;" onclick="setColor('#eab308', this)" aria-label="Select amber color"></button>
-                        <button type="button" class="color-swatch" style="background: #84cc16; border: none; padding: 0;" onclick="setColor('#84cc16', this)" aria-label="Select lime color"></button>
-                        <button type="button" class="color-swatch" style="background: #06b6d4; border: none; padding: 0;" onclick="setColor('#06b6d4', this)" aria-label="Select cyan color"></button>
-                        <button type="button" class="color-swatch" style="background: #3b82f6; border: none; padding: 0;" onclick="setColor('#3b82f6', this)" aria-label="Select light blue color"></button>
+                        <button type="button" class="color-swatch" style="background: #ef4444; border: none; padding: 0;" data-color="#ef4444" aria-label="Select red color"></button>
+                        <button type="button" class="color-swatch" style="background: #f97316; border: none; padding: 0;" data-color="#f97316" aria-label="Select orange color"></button>
+                        <button type="button" class="color-swatch" style="background: #eab308; border: none; padding: 0;" data-color="#eab308" aria-label="Select amber color"></button>
+                        <button type="button" class="color-swatch" style="background: #84cc16; border: none; padding: 0;" data-color="#84cc16" aria-label="Select lime color"></button>
+                        <button type="button" class="color-swatch" style="background: #06b6d4; border: none; padding: 0;" data-color="#06b6d4" aria-label="Select cyan color"></button>
+                        <button type="button" class="color-swatch" style="background: #3b82f6; border: none; padding: 0;" data-color="#3b82f6" aria-label="Select light blue color"></button>
                         <!-- Row 4: More Colors -->
-                        <button type="button" class="color-swatch" style="background: #6366f1; border: none; padding: 0;" onclick="setColor('#6366f1', this)" aria-label="Select indigo color"></button>
-                        <button type="button" class="color-swatch" style="background: #8b5cf6; border: none; padding: 0;" onclick="setColor('#8b5cf6', this)" aria-label="Select violet color"></button>
-                        <button type="button" class="color-swatch" style="background: #ec4899; border: none; padding: 0;" onclick="setColor('#ec4899', this)" aria-label="Select fuchsia color"></button>
-                        <button type="button" class="color-swatch" style="background: #14b8a6; border: none; padding: 0;" onclick="setColor('#14b8a6', this)" aria-label="Select teal color"></button>
-                        <button type="button" class="color-swatch" style="background: #0ea5e9; border: none; padding: 0;" onclick="setColor('#0ea5e9', this)" aria-label="Select sky color"></button>
-                        <button type="button" class="color-swatch" style="background: #78716c; border: none; padding: 0;" onclick="setColor('#78716c', this)" aria-label="Select stone color"></button>
+                        <button type="button" class="color-swatch" style="background: #6366f1; border: none; padding: 0;" data-color="#6366f1" aria-label="Select indigo color"></button>
+                        <button type="button" class="color-swatch" style="background: #8b5cf6; border: none; padding: 0;" data-color="#8b5cf6" aria-label="Select violet color"></button>
+                        <button type="button" class="color-swatch" style="background: #ec4899; border: none; padding: 0;" data-color="#ec4899" aria-label="Select fuchsia color"></button>
+                        <button type="button" class="color-swatch" style="background: #14b8a6; border: none; padding: 0;" data-color="#14b8a6" aria-label="Select teal color"></button>
+                        <button type="button" class="color-swatch" style="background: #0ea5e9; border: none; padding: 0;" data-color="#0ea5e9" aria-label="Select sky color"></button>
+                        <button type="button" class="color-swatch" style="background: #78716c; border: none; padding: 0;" data-color="#78716c" aria-label="Select stone color"></button>
                         <!-- Row 5: Gradients -->
-                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #9333ea, #a855f7); border: none; padding: 0;" onclick="setGradient('linear-gradient(135deg, #9333ea, #a855f7)', this)" aria-label="Select purple gradient"></button>
-                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #3b82f6, #06b6d4); border: none; padding: 0;" onclick="setGradient('linear-gradient(135deg, #3b82f6, #06b6d4)', this)" aria-label="Select blue gradient"></button>
-                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #fbbf24, #fb7185); border: none; padding: 0;" onclick="setGradient('linear-gradient(135deg, #fbbf24, #fb7185)', this)" aria-label="Select sunset gradient"></button>
-                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #34d399, #06b6d4); border: none; padding: 0;" onclick="setGradient('linear-gradient(135deg, #34d399, #06b6d4)', this)" aria-label="Select ocean gradient"></button>
-                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; padding: 0;" onclick="setGradient('linear-gradient(135deg, #ec4899, #8b5cf6)', this)" aria-label="Select pink purple gradient"></button>
-                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #f97316, #eab308); border: none; padding: 0;" onclick="setGradient('linear-gradient(135deg, #f97316, #eab308)', this)" aria-label="Select fire gradient"></button>
+                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #9333ea, #a855f7); border: none; padding: 0;" data-gradient="linear-gradient(135deg, #9333ea, #a855f7)" aria-label="Select purple gradient"></button>
+                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #3b82f6, #06b6d4); border: none; padding: 0;" data-gradient="linear-gradient(135deg, #3b82f6, #06b6d4)" aria-label="Select blue gradient"></button>
+                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #fbbf24, #fb7185); border: none; padding: 0;" data-gradient="linear-gradient(135deg, #fbbf24, #fb7185)" aria-label="Select sunset gradient"></button>
+                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #34d399, #06b6d4); border: none; padding: 0;" data-gradient="linear-gradient(135deg, #34d399, #06b6d4)" aria-label="Select ocean gradient"></button>
+                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #ec4899, #8b5cf6); border: none; padding: 0;" data-gradient="linear-gradient(135deg, #ec4899, #8b5cf6)" aria-label="Select pink purple gradient"></button>
+                        <button type="button" class="color-swatch gradient" style="background: linear-gradient(135deg, #f97316, #eab308); border: none; padding: 0;" data-gradient="linear-gradient(135deg, #f97316, #eab308)" aria-label="Select fire gradient"></button>
                     </div>
 
                     <!-- Gradient Customizer -->
@@ -1699,7 +1702,7 @@
                             <input type="color" id="gradient-start" class="gradient-color-input" value="#9333ea" oninput="updateGradient()" aria-label="Gradient start color">
                             <input type="color" id="gradient-end" class="gradient-color-input" value="#a855f7" oninput="updateGradient()" aria-label="Gradient end color">
                         </div>
-                        <div id="gradient-preview" class="gradient-preview" style="background: linear-gradient(135deg, #9333ea, #a855f7);" onclick="applyCustomGradient()" aria-label="Apply custom gradient"></div>
+                        <div id="gradient-preview" class="gradient-preview" style="background: linear-gradient(135deg, #9333ea, #a855f7);"  aria-label="Apply custom gradient"></div>
                     </div>
 
                     <!-- Finish Selector -->
@@ -1707,11 +1710,11 @@
                         <h4 style="font-size: 0.75rem; font-weight: 600; color: rgba(255, 255, 255, 0.6); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Finish</h4>
                         <div style="display: flex; gap: 0.75rem;">
                             <label class="finish-option">
-                                <input type="radio" name="finish" value="matt" id="finish-matt" checked onchange="updateFinish('matt')" style="cursor: pointer; accent-color: #9333ea;" aria-label="Matt finish">
+                                <input type="radio" name="finish" value="matt" id="finish-matt" checked style="cursor: pointer; accent-color: #9333ea;" aria-label="Matt finish">
                                 <span style="font-size: 0.875rem; font-weight: 500;">Matt</span>
                             </label>
                             <label class="finish-option">
-                                <input type="radio" name="finish" value="glossy" id="finish-glossy" onchange="updateFinish('glossy')" style="cursor: pointer; accent-color: #9333ea;" aria-label="Glossy finish">
+                                <input type="radio" name="finish" value="glossy" id="finish-glossy" style="cursor: pointer; accent-color: #9333ea;" aria-label="Glossy finish">
                                 <span style="font-size: 0.875rem; font-weight: 500;">Glossy</span>
                             </label>
                         </div>
@@ -1723,7 +1726,7 @@
                 <div class="section preset-section">
                     <h3 class="section-title">Patterns</h3>
                     <div class="preset-grid">
-                        <button type="button" class="preset-item" onclick="addPresetLogo('zebra')">
+                        <button type="button" class="preset-item" data-preset-key="zebra">
                             <div class="preset-icon" aria-hidden="true">
                                 <i data-lucide="scan-line"></i>
                             </div>
@@ -1732,7 +1735,7 @@
                                 <div class="preset-subtext">High-contrast organic stripes</div>
                             </div>
                         </button>
-                        <button type="button" class="preset-item" onclick="addPresetLogo('stripes')">
+                        <button type="button" class="preset-item" data-preset-key="stripes">
                             <div class="preset-icon" aria-hidden="true">
                                 <i data-lucide="slash"></i>
                             </div>
@@ -1741,7 +1744,7 @@
                                 <div class="preset-subtext">Clean angled lines</div>
                             </div>
                         </button>
-                        <button type="button" class="preset-item" onclick="addPresetLogo('dots')">
+                        <button type="button" class="preset-item" data-preset-key="dots">
                             <div class="preset-icon" aria-hidden="true">
                                 <i data-lucide="grip-horizontal"></i>
                             </div>
@@ -1750,7 +1753,7 @@
                                 <div class="preset-subtext">Soft halftone texture</div>
                             </div>
                         </button>
-                        <button type="button" class="preset-item" onclick="addPresetLogo('squares')">
+                        <button type="button" class="preset-item" data-preset-key="squares">
                             <div class="preset-icon" aria-hidden="true">
                                 <i data-lucide="layout-dashboard"></i>
                             </div>
@@ -1765,12 +1768,12 @@
                 <!-- File Upload -->
                 <div class="section">
                     <h3 class="section-title">Upload Files (Max 5)</h3>
-                    <button type="button" class="file-upload-section" onclick="document.getElementById('file-input').click()" style="width: 100%; background: transparent; cursor: pointer;" aria-label="Upload files">
+                    <button type="button" class="file-upload-section"  style="width: 100%; background: transparent; cursor: pointer;" aria-label="Upload files">
                         <div class="upload-icon" aria-hidden="true">📁</div>
                         <div class="upload-text">Click to upload files</div>
                         <div class="upload-subtext">PNG, JPG, PDF up to 10MB each</div>
                     </button>
-                    <input type="file" id="file-input" accept="image/*" multiple style="display: none;" onchange="handleFileUpload(event)">
+                    <input type="file" id="file-input" accept="image/*" multiple style="display: none;" >
                     <div class="files-list" id="files-list"></div>
                 </div>
 
@@ -1778,16 +1781,16 @@
                 <div class="section">
                     <h3 class="section-title">Amount</h3>
                     <div class="quantity-selector">
-                        <button class="quantity-btn" onclick="decrementQuantity()" aria-label="Decrease quantity">−</button>
+                        <button class="quantity-btn"  aria-label="Decrease quantity">−</button>
                         <div class="quantity-value" id="quantity" aria-live="polite" aria-atomic="true">1</div>
-                        <button class="quantity-btn" onclick="incrementQuantity()" aria-label="Increase quantity">+</button>
+                        <button class="quantity-btn"  aria-label="Increase quantity">+</button>
                     </div>
                 </div>
             </div>
 
             <!-- Fixed Order Button -->
             <div class="order-button-container">
-                <button class="btn-primary" onclick="openOrderPreview()">Order now</button>
+                <button class="btn-primary" >Order now</button>
             </div>
         </div>
     </div>
@@ -1798,14 +1801,14 @@
             <h3 class="modal-title">Delete File?</h3>
             <p class="modal-text">Are you sure you want to remove this file? This action cannot be undone.</p>
             <div class="modal-actions">
-                <button class="modal-btn cancel" onclick="cancelDelete()">Cancel</button>
-                <button class="modal-btn confirm" onclick="confirmDelete()">Delete</button>
+                <button class="modal-btn cancel" >Cancel</button>
+                <button class="modal-btn confirm" >Delete</button>
             </div>
         </div>
     </div>
 
     <!-- Order Preview Modal -->
-    <div class="order-preview-overlay" id="order-preview-overlay" onclick="if(event.target === this) closeOrderPreview()">
+    <div class="order-preview-overlay" id="order-preview-overlay" >
         <div class="order-preview-modal">
             <div class="order-preview-header">
                 <h2 class="order-preview-title">Order Preview</h2>
@@ -1864,13 +1867,154 @@
                 </div>
             </div>
             <div class="order-preview-actions">
-                <button class="order-preview-btn primary" onclick="proceedToCheckout()">Next</button>
-                <button class="order-preview-btn secondary" onclick="closeOrderPreview()">Edit</button>
+                <button class="order-preview-btn secondary" >Edit</button>
+                <button class="order-preview-btn primary" >Next</button>
             </div>
         </div>
     </div>
 
     <script>
+        // ============================================================================
+        // UTILITIES & CONFIGURATION
+        // ============================================================================
+        
+        // Configuration constants
+        const CONFIG = {
+            MAX_FILES: 5,
+            MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
+            SERVER_PORT: 8000,
+            DEBOUNCE_DELAY: 16, // ~60fps for mousemove
+            ERROR_DISPLAY_TIME: 5000,
+            IS_DEVELOPMENT: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        };
+
+        // Logger utility - wraps console statements
+        const Logger = {
+            log: (...args) => {
+                if (CONFIG.IS_DEVELOPMENT) {
+                    console.log(...args);
+                }
+            },
+            error: (...args) => {
+                console.error(...args);
+                // In production, send to error tracking service (e.g., Sentry)
+            },
+            warn: (...args) => {
+                if (CONFIG.IS_DEVELOPMENT) {
+                    console.warn(...args);
+                }
+            }
+        };
+
+        // Error handler utility
+        const ErrorHandler = {
+            show: (message, type = 'error') => {
+                // Remove existing error if any
+                const existing = document.getElementById('error-message');
+                if (existing) existing.remove();
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.id = 'error-message';
+                errorDiv.className = `error-message error-${type}`;
+                errorDiv.textContent = message;
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: ${type === 'error' ? '#ef4444' : '#3b82f6'};
+                    color: white;
+                    padding: 1rem 2rem;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                    font-family: 'Inter', sans-serif;
+                `;
+                document.body.appendChild(errorDiv);
+                
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.remove();
+                    }
+                }, CONFIG.ERROR_DISPLAY_TIME);
+            },
+            
+            log: (error, context = '') => {
+                Logger.error(`[${context}]`, error);
+            }
+        };
+
+        // Debounce utility for performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Safe DOM manipulation helpers
+        const DOMHelper = {
+            // Safely create SVG elements
+            createSVGElement: (tag, attributes = {}) => {
+                const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+                Object.entries(attributes).forEach(([key, value]) => {
+                    element.setAttribute(key, value);
+                });
+                return element;
+            },
+            
+            // Safely set text content (prevents XSS)
+            setTextContent: (element, text) => {
+                if (element) {
+                    element.textContent = text;
+                }
+            },
+            
+            // Safely clear element content
+            clearElement: (element) => {
+                if (element) {
+                    while (element.firstChild) {
+                        element.removeChild(element.firstChild);
+                    }
+                }
+            }
+        };
+
+        // Event listener management for cleanup
+        const eventListeners = [];
+        const EventManager = {
+            add: (element, event, handler, options = false) => {
+                element.addEventListener(event, handler, options);
+                eventListeners.push({ element, event, handler, options });
+                return () => {
+                    element.removeEventListener(event, handler, options);
+                    const index = eventListeners.findIndex(
+                        e => e.element === element && e.event === event && e.handler === handler
+                    );
+                    if (index > -1) eventListeners.splice(index, 1);
+                };
+            },
+            
+            cleanup: () => {
+                eventListeners.forEach(({ element, event, handler, options }) => {
+                    element.removeEventListener(event, handler, options);
+                });
+                eventListeners.length = 0;
+            }
+        };
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', EventManager.cleanup);
+
+        // ============================================================================
+        // APPLICATION STATE
+        // ============================================================================
+        
         // State
         let state = {
             vehicleType: 'phonecase',
@@ -1990,9 +2134,18 @@
                 }
             });
 
+            // Use debounced handler for mousemove to improve performance
+            const debouncedHandlePositioning = debounce((e) => {
+                if (isDraggingImage && isPositioning && positioningImageId !== null) {
+                    e.preventDefault();
+                    handleImagePositioning(e);
+                }
+            }, CONFIG.DEBOUNCE_DELAY);
+            
             svgViewer.addEventListener('mousemove', (e) => {
                 if (isDraggingImage && isPositioning && positioningImageId !== null) {
                     e.preventDefault();
+                    // Use immediate handler for better responsiveness during drag
                     handleImagePositioning(e);
                 }
             });
@@ -2011,10 +2164,26 @@
         function loadSVGTemplate(filename) {
             // Check if we're running from file:// protocol
             if (window.location.protocol === 'file:') {
-                console.error('Please access this page via http://localhost:8000 instead of file://');
-                alert('⚠️ CORS Error: Please access this page via http://localhost:8000\n\nThe file:// protocol blocks loading SVG files. Use the local server instead.');
-                // Create a simple fallback SVG
-                svgViewer.innerHTML = '<rect width="320" height="638" fill="#F5F5F5" rx="20"/><text x="160" y="319" text-anchor="middle" fill="#666" font-size="16">Please use http://localhost:8000</text>';
+                Logger.error('Please access this page via http://localhost:8000 instead of file://');
+                ErrorHandler.show('⚠️ CORS Error: Please access this page via http://localhost:8000\n\nThe file:// protocol blocks loading SVG files. Use the local server instead.', 'error');
+                // Create a simple fallback SVG safely
+                DOMHelper.clearElement(svgViewer);
+                const rect = DOMHelper.createSVGElement('rect', {
+                    width: '320',
+                    height: '638',
+                    fill: '#F5F5F5',
+                    rx: '20'
+                });
+                const text = DOMHelper.createSVGElement('text', {
+                    x: '160',
+                    y: '319',
+                    'text-anchor': 'middle',
+                    fill: '#666',
+                    'font-size': '16'
+                });
+                DOMHelper.setTextContent(text, 'Please use http://localhost:8000');
+                svgViewer.appendChild(rect);
+                svgViewer.appendChild(text);
                 svgViewer.setAttribute('viewBox', '0 0 320 638');
                 svgContent = svgViewer;
                 return;
@@ -2039,8 +2208,8 @@
                         throw new Error('SVG parsing error: ' + parserError.textContent);
                     }
 
-                    // Clear existing content
-                    svgViewer.innerHTML = '';
+                    // Clear existing content safely
+                    DOMHelper.clearElement(svgViewer);
 
                     // Copy all elements from the imported SVG
                     Array.from(importedSvg.children).forEach(child => {
@@ -2057,23 +2226,34 @@
                     applyImagesToSVG();
                 })
                 .catch(error => {
-                    console.error('Error loading SVG:', error);
-                    // Create a simple fallback SVG
-                    svgViewer.innerHTML = '<rect width="320" height="638" fill="#F5F5F5" rx="20"/><text x="160" y="319" text-anchor="middle" fill="#666" font-size="14">Error loading SVG. Check console.</text>';
+                    ErrorHandler.log(error, 'loadSVGTemplate');
+                    ErrorHandler.show('Failed to load SVG template. Please check the console for details.', 'error');
+                    // Create a simple fallback SVG safely
+                    DOMHelper.clearElement(svgViewer);
+                    const rect = DOMHelper.createSVGElement('rect', {
+                        width: '320',
+                        height: '638',
+                        fill: '#F5F5F5',
+                        rx: '20'
+                    });
+                    const text = DOMHelper.createSVGElement('text', {
+                        x: '160',
+                        y: '319',
+                        'text-anchor': 'middle',
+                        fill: '#666',
+                        'font-size': '14'
+                    });
+                    DOMHelper.setTextContent(text, 'Error loading SVG. Check console.');
+                    svgViewer.appendChild(rect);
+                    svgViewer.appendChild(text);
                     svgViewer.setAttribute('viewBox', '0 0 320 638');
                     svgContent = svgViewer;
                 });
         }
 
         // Old Three.js functions removed - no longer needed for 2D SVG customizer
+        // The following code is kept for reference but is not executed
         /*
-        function loadVehicleModel_OLD(modelFile = null) {
-            // Check if GLTFLoader is available
-            if (typeof THREE.GLTFLoader === 'undefined') {
-                console.error('GLTFLoader is not available. Using fallback geometry.');
-                createFallbackCar();
-                return;
-            }
             
             // Determine which model file to load
             const modelFilename = modelFile || vehicleModels[state.vehicleName] || 'Cadillac CT4 V 2022.glb';
@@ -2180,11 +2360,11 @@
                         applyImagesToModel();
                     },
                     (progress) => {
-                        console.log('Loading: ' + (progress.loaded / progress.total * 100) + '%');
+                        Logger.log('Loading: ' + (progress.loaded / progress.total * 100) + '%');
                     },
                     (error) => {
-                        console.error('GLB loading failed:', error);
-                        console.log('Using fallback geometry');
+                        ErrorHandler.log(error, 'loadVehicleModel_OLD');
+                        Logger.log('Using fallback geometry');
                         createFallbackCar();
                     }
                 );
@@ -2451,7 +2631,7 @@
         // Start positioning mode for an image
         function startImagePositioning(imageId) {
             if (!svgViewer) {
-                alert('Please wait for the SVG to load before positioning images.');
+                ErrorHandler.show('Please wait for the SVG to load before positioning images.', 'error');
                 return;
             }
             
@@ -2525,13 +2705,33 @@
                     color: #ffffff;
                     text-align: center;
                 `;
-                hint.innerHTML = `
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
-                    <div style="font-weight: 600; margin-bottom: 0.25rem;">Positioning Image</div>
-                    <div style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);">Click and drag on the object to position the image</div>
-                    <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-top: 0.5rem;">Press ESC to cancel</div>
-                `;
-                document.getElementById('canvas-container').appendChild(hint);
+                
+                // Create hint content safely (no innerHTML)
+                const icon = document.createElement('div');
+                icon.style.cssText = 'font-size: 2rem; margin-bottom: 0.5rem;';
+                icon.textContent = '🎯';
+                
+                const title = document.createElement('div');
+                title.style.cssText = 'font-weight: 600; margin-bottom: 0.25rem;';
+                title.textContent = 'Positioning Image';
+                
+                const instruction = document.createElement('div');
+                instruction.style.cssText = 'font-size: 0.875rem; color: rgba(255, 255, 255, 0.6);';
+                instruction.textContent = 'Click and drag on the object to position the image';
+                
+                const cancelHint = document.createElement('div');
+                cancelHint.style.cssText = 'font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-top: 0.5rem;';
+                cancelHint.textContent = 'Press ESC to cancel';
+                
+                hint.appendChild(icon);
+                hint.appendChild(title);
+                hint.appendChild(instruction);
+                hint.appendChild(cancelHint);
+                
+                const canvasContainer = document.getElementById('canvas-container');
+                if (canvasContainer) {
+                    canvasContainer.appendChild(hint);
+                }
             } else if (!show && hint) {
                 hint.remove();
             }
@@ -2757,7 +2957,7 @@
                     
                     // Debug: log if no content was added
                     if (patternGroup.children.length === 0) {
-                        console.warn('Pattern group is empty after cloning. Source SVG children:', 
+                        Logger.warn('Pattern group is empty after cloning. Source SVG children:', 
                             Array.from(sourceSvg.children).map(c => c.tagName));
                     }
                     
@@ -3071,16 +3271,29 @@
         }
 
         function setColor(color, element) {
-            console.log('setColor called:', color);
-            state.color = color;
+            // Validate and sanitize color input
+            if (!color || typeof color !== 'string') {
+                Logger.warn('setColor called with invalid color:', color);
+                return;
+            }
+            
+            // Trim and validate color format
+            const trimmedColor = color.trim();
+            if (!/^#[0-9A-Fa-f]{6}$/.test(trimmedColor)) {
+                Logger.warn('setColor called with invalid color format:', color);
+                return;
+            }
+            
+            Logger.log('setColor called:', trimmedColor);
+            state.color = trimmedColor;
             state.isGradient = false;
-            updateColorUI(color, element);
+            updateColorUI(trimmedColor, element);
             // Update gradient inputs to default to selected color
             const gradientStart = document.getElementById('gradient-start');
             const gradientEnd = document.getElementById('gradient-end');
             if (gradientStart && gradientEnd) {
-                gradientStart.value = color;
-                gradientEnd.value = color;
+                gradientStart.value = trimmedColor;
+                gradientEnd.value = trimmedColor;
                 updateGradient();
             }
             // Update the SVG color
@@ -3088,8 +3301,21 @@
         }
 
         function setGradient(gradient, element) {
-            console.log('setGradient called:', gradient);
-            state.color = gradient;
+            // Validate gradient input
+            if (!gradient || typeof gradient !== 'string') {
+                Logger.warn('setGradient called with invalid gradient:', gradient);
+                return;
+            }
+            
+            // Trim and validate gradient format
+            const trimmedGradient = gradient.trim();
+            if (!trimmedGradient.startsWith('linear-gradient')) {
+                Logger.warn('setGradient called with invalid gradient format:', gradient);
+                return;
+            }
+            
+            Logger.log('setGradient called:', trimmedGradient);
+            state.color = trimmedGradient;
             state.isGradient = true;
             // Update active swatch
             document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
@@ -3099,8 +3325,8 @@
             // Update color preview
             const colorPreview = document.getElementById('color-preview');
             if (colorPreview) {
-                colorPreview.value = gradient;
-                colorPreview.style.background = gradient;
+                colorPreview.value = trimmedGradient;
+                colorPreview.style.background = trimmedGradient;
             }
             // Update the SVG color
             updateCarColor();
@@ -3127,15 +3353,15 @@
 
         function handleFileUpload(event) {
             const newFiles = Array.from(event.target.files);
-            const availableSlots = 5 - state.files.length;
+            const availableSlots = CONFIG.MAX_FILES - state.files.length;
             
             if (newFiles.length > availableSlots) {
-                alert(`You can only upload ${availableSlots} more file(s). Maximum is 5 files.`);
+                ErrorHandler.show(`You can only upload ${availableSlots} more file(s). Maximum is ${CONFIG.MAX_FILES} files.`, 'error');
                 newFiles.splice(availableSlots);
             }
             
             newFiles.forEach(file => {
-                if (state.files.length < 5 && file.type.startsWith('image/')) {
+                if (state.files.length < CONFIG.MAX_FILES && file.type.startsWith('image/')) {
                     const fileId = Date.now() + Math.random();
                     const reader = new FileReader();
                     
@@ -3163,7 +3389,7 @@
                         img.src = e.target.result;
                     };
                     reader.readAsDataURL(file);
-                } else if (state.files.length < 5) {
+                } else if (state.files.length < CONFIG.MAX_FILES) {
                     // Non-image files (like PDF) - just store metadata
                     state.files.push({
                         name: file.name,
@@ -3181,13 +3407,13 @@
         function addPresetLogo(key) {
             const preset = logoPresets[key];
             if (!preset) {
-                console.warn('Unknown logo preset key:', key);
+                Logger.warn('Unknown logo preset key:', key);
                 return;
             }
 
-            const availableSlots = 5 - state.files.length;
+            const availableSlots = CONFIG.MAX_FILES - state.files.length;
             if (availableSlots <= 0) {
-                alert('You have reached the maximum of 5 files. Remove one to add another logo.');
+                ErrorHandler.show(`You have reached the maximum of ${CONFIG.MAX_FILES} files. Remove one to add another logo.`, 'error');
                 return;
             }
 
@@ -3254,12 +3480,12 @@
         function renderFilesList() {
             const listEl = document.getElementById('files-list');
             if (state.files.length === 0) {
-                listEl.innerHTML = '';
+                DOMHelper.clearElement(listEl);
                 return;
             }
             
             // Clear and rebuild list
-            listEl.innerHTML = '';
+            DOMHelper.clearElement(listEl);
             
             state.files.forEach((file, index) => {
                 const imageData = uploadedImages.find(img => String(img.id) === String(file.id));
@@ -3275,10 +3501,19 @@
                 
                 const fileInfo = document.createElement('div');
                 fileInfo.className = 'file-info';
-                fileInfo.innerHTML = `
-                    <div class="file-icon">${isImage ? '🖼️' : '📄'}</div>
-                    <div class="file-name">${file.name}</div>
-                `;
+                
+                // Create file icon safely
+                const fileIcon = document.createElement('div');
+                fileIcon.className = 'file-icon';
+                fileIcon.textContent = isImage ? '🖼️' : '📄';
+                
+                // Create file name safely
+                const fileName = document.createElement('div');
+                fileName.className = 'file-name';
+                DOMHelper.setTextContent(fileName, file.name);
+                
+                fileInfo.appendChild(fileIcon);
+                fileInfo.appendChild(fileName);
                 fileItem.appendChild(fileInfo);
                 
                 const actionsDiv = document.createElement('div');
@@ -3563,10 +3798,18 @@
                 return;
             }
             
-            // Clone using innerHTML for better compatibility with SVG content
-            // This preserves all elements, attributes, and data URLs
-            const clonedContent = sourceSVG.innerHTML;
-            targetSVG.innerHTML = clonedContent;
+            // Clone SVG content safely using cloneNode
+            DOMHelper.clearElement(targetSVG);
+            
+            // Clone all child nodes
+            Array.from(sourceSVG.childNodes).forEach(node => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    targetSVG.appendChild(node.cloneNode(true));
+                } else if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                    // Preserve text nodes if any
+                    targetSVG.appendChild(node.cloneNode(true));
+                }
+            });
             
             // Copy viewBox and other attributes
             if (sourceSVG.hasAttribute('viewBox')) {
@@ -3589,8 +3832,8 @@
 
         function proceedToCheckout() {
             // This function can be extended to proceed to the next step of checkout
-            // For now, we'll just show an alert or you can redirect to a checkout page
-            alert('Proceeding to checkout...\n\nThis would typically redirect to a checkout page with order details.');
+            // For now, we'll just show a message or you can redirect to a checkout page
+            ErrorHandler.show('Proceeding to checkout...\n\nThis would typically redirect to a checkout page with order details.', 'info');
             // Uncomment below to redirect:
             // window.location.href = '/checkout';
         }
@@ -3670,11 +3913,166 @@
             }
         });
 
+        // ============================================================================
+        // EVENT LISTENER INITIALIZATION (Replaces inline onclick handlers)
+        // ============================================================================
+        
+        function initializeEventListeners() {
+            // Color swatches - use event delegation
+            document.addEventListener('click', (e) => {
+                const colorSwatch = e.target.closest('.color-swatch');
+                if (colorSwatch) {
+                    if (colorSwatch.hasAttribute('data-color')) {
+                        const color = colorSwatch.getAttribute('data-color').trim();
+                        // Validate color format (should be #rrggbb)
+                        if (color && /^#[0-9A-Fa-f]{6}$/.test(color)) {
+                            setColor(color, colorSwatch);
+                        } else {
+                            Logger.warn('Invalid color format:', color);
+                        }
+                    } else if (colorSwatch.hasAttribute('data-gradient')) {
+                        const gradient = colorSwatch.getAttribute('data-gradient').trim();
+                        // Validate gradient format
+                        if (gradient && gradient.startsWith('linear-gradient')) {
+                            setGradient(gradient, colorSwatch);
+                        } else {
+                            Logger.warn('Invalid gradient format:', gradient);
+                        }
+                    }
+                }
+            });
+            
+            // Dropdown toggle
+            const dropdownTrigger = document.querySelector('.dropdown-trigger');
+            if (dropdownTrigger) {
+                EventManager.add(dropdownTrigger, 'click', toggleDropdown);
+            }
+            
+            // Vehicle options
+            document.addEventListener('click', (e) => {
+                const vehicleOption = e.target.closest('.vehicle-option');
+                if (vehicleOption && vehicleOption.hasAttribute('data-vehicle-name')) {
+                    const name = vehicleOption.getAttribute('data-vehicle-name');
+                    const type = vehicleOption.getAttribute('data-vehicle-type');
+                    selectVehicle(name, type, vehicleOption);
+                }
+            });
+            
+            // Finish radio buttons
+            const finishInputs = document.querySelectorAll('input[name="finish"]');
+            finishInputs.forEach(input => {
+                EventManager.add(input, 'change', (e) => {
+                    updateFinish(e.target.value);
+                });
+            });
+            
+            // Price breakdown toggle
+            const priceToggle = document.querySelector('.price-details-toggle');
+            if (priceToggle) {
+                EventManager.add(priceToggle, 'click', togglePriceBreakdown);
+            }
+            
+            // Preset logo buttons
+            document.addEventListener('click', (e) => {
+                const presetBtn = e.target.closest('.preset-item');
+                if (presetBtn && presetBtn.hasAttribute('data-preset-key')) {
+                    const key = presetBtn.getAttribute('data-preset-key');
+                    addPresetLogo(key);
+                }
+            });
+            
+            // File upload button
+            const fileUploadSection = document.querySelector('.file-upload-section');
+            const fileInput = document.getElementById('file-input');
+            if (fileUploadSection && fileInput) {
+                EventManager.add(fileUploadSection, 'click', () => fileInput.click());
+            }
+            if (fileInput) {
+                EventManager.add(fileInput, 'change', handleFileUpload);
+            }
+            
+            // Quantity buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('quantity-btn')) {
+                    if (e.target.textContent === '−' || e.target.textContent === '-') {
+                        decrementQuantity();
+                    } else if (e.target.textContent === '+' || e.target.textContent === '+') {
+                        incrementQuantity();
+                    }
+                }
+            });
+            
+            // Order preview button
+            const orderBtn = document.querySelector('.btn-primary');
+            if (orderBtn && orderBtn.textContent.includes('Order')) {
+                EventManager.add(orderBtn, 'click', openOrderPreview);
+            }
+            
+            // Modal buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-btn')) {
+                    if (e.target.classList.contains('cancel')) {
+                        cancelDelete();
+                    } else if (e.target.classList.contains('confirm')) {
+                        confirmDelete();
+                    }
+                }
+            });
+            
+            // Order preview buttons
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('order-preview-btn')) {
+                    if (e.target.classList.contains('secondary')) {
+                        closeOrderPreview();
+                    } else if (e.target.classList.contains('primary')) {
+                        proceedToCheckout();
+                    }
+                }
+            });
+            
+            // Order preview overlay click (close on background click)
+            const orderPreviewOverlay = document.getElementById('order-preview-overlay');
+            if (orderPreviewOverlay) {
+                EventManager.add(orderPreviewOverlay, 'click', (e) => {
+                    if (e.target === orderPreviewOverlay) {
+                        closeOrderPreview();
+                    }
+                });
+            }
+            
+            // Gradient preview click
+            const gradientPreview = document.getElementById('gradient-preview');
+            if (gradientPreview) {
+                EventManager.add(gradientPreview, 'click', applyCustomGradient);
+            }
+        }
+        
+        // Make functions globally accessible for any remaining inline handlers or external calls
+        window.setColor = setColor;
+        window.setGradient = setGradient;
+        window.toggleDropdown = toggleDropdown;
+        window.selectVehicle = selectVehicle;
+        window.togglePriceBreakdown = togglePriceBreakdown;
+        window.addPresetLogo = addPresetLogo;
+        window.handleFileUpload = handleFileUpload;
+        window.decrementQuantity = decrementQuantity;
+        window.incrementQuantity = incrementQuantity;
+        window.openOrderPreview = openOrderPreview;
+        window.cancelDelete = cancelDelete;
+        window.confirmDelete = confirmDelete;
+        window.closeOrderPreview = closeOrderPreview;
+        window.proceedToCheckout = proceedToCheckout;
+        window.applyCustomGradient = applyCustomGradient;
+        window.updateFinish = updateFinish;
+        
         // Initialize pricing (2D viewer is handled by SVG rendering)
         updatePricing();
         
         // Initialize color UI with default color
         updateColorUI('#f5f5f5', document.querySelector('.color-swatch.active'));
+        
+        // Initialize event listeners (replaces inline handlers)
+        initializeEventListeners();
         
         // Hydrate Lucide icons once DOM and scripts are ready
         if (window.lucide && typeof window.lucide.createIcons === 'function') {
