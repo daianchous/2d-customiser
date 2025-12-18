@@ -396,7 +396,7 @@
         /* Right: Control Panel */
         .control-section {
             display: grid;
-            grid-template-rows: auto 1fr;
+            grid-template-rows: auto 1fr auto;
             background: #2a2a2a;
             border: none;
             outline: 2px solid #3a3a3a;
@@ -519,7 +519,7 @@
             overflow-y: auto;
             padding: 10px;
             padding-bottom: 2rem;
-            max-height: calc(100vh - 64px - 200px);
+            max-height: calc(100vh - 64px - 200px - 80px);
         }
 
         .customization-panel::-webkit-scrollbar {
@@ -539,6 +539,17 @@
 
         .customization-panel::-webkit-scrollbar-thumb:hover {
             background: #9333ea;
+        }
+
+        /* Fixed Order Button Container */
+        .order-button-container {
+            padding: 10px;
+            background: #1a1a1a;
+            border-top: 2px solid #3a3a3a;
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-height: 70px;
         }
 
         .section {
@@ -1081,7 +1092,7 @@
         /* Button */
         .btn-primary {
             width: 100%;
-            padding: 1rem 1.5rem;
+            padding: 1.5rem 1.5rem;
             background: #9333ea;
             border: none;
             outline: 2px solid #a855f7;
@@ -1089,13 +1100,16 @@
             border-radius: 0;
             color: #ffffff;
             font-family: 'Inter', sans-serif;
-            font-size: 0.9375rem;
+            font-size: 1rem;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.15s;
             box-shadow: none;
             letter-spacing: 0.1em;
             text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-primary:hover {
@@ -1356,7 +1370,7 @@
             <!-- Fixed Pricing -->
             <div class="pricing-fixed">
                 <div class="price-display">
-                    <div class="price-amount" id="total-price">$5</div>
+                    <div class="price-amount" id="total-price">$20</div>
                     <div class="price-label">total</div>
                 </div>
                 <button class="price-details-toggle" onclick="togglePriceBreakdown()" aria-expanded="false" aria-controls="price-breakdown" aria-label="Toggle price breakdown">
@@ -1366,7 +1380,7 @@
                 <div class="price-breakdown" id="price-breakdown" role="region" aria-label="Price breakdown">
                     <div class="price-line">
                         <span>Base wrap</span>
-                        <span class="amount" id="base-price">$5</span>
+                        <span class="amount" id="base-price">$20</span>
                     </div>
                     <div class="price-line" id="files-line" style="display: none;">
                         <span>File printing (<span id="file-count">0</span>)</span>
@@ -1559,15 +1573,6 @@
                                 <div class="preset-subtext">Modern grid blocks</div>
                             </div>
                         </button>
-                        <button type="button" class="preset-item" onclick="addPresetLogo('logoll')">
-                            <div class="preset-icon" aria-hidden="true">
-                                <img src="logoll.svg" alt="@logoll logo" />
-                            </div>
-                            <div>
-                                <div class="preset-label">@logoll</div>
-                                <div class="preset-subtext">Brand mark overlay (25% opacity)</div>
-                            </div>
-                        </button>
                     </div>
                 </div>
 
@@ -1592,9 +1597,11 @@
                         <button class="quantity-btn" onclick="incrementQuantity()" aria-label="Increase quantity">+</button>
                     </div>
                 </div>
+            </div>
 
-                <!-- CTA -->
-                <button class="btn-primary">Request Approval</button>
+            <!-- Fixed Order Button -->
+            <div class="order-button-container">
+                <button class="btn-primary">Order now</button>
             </div>
         </div>
     </div>
@@ -1708,15 +1715,6 @@
                             <rect x="40" y="160" width="140" height="120" rx="12" fill="#22c55e" opacity="0.95"/>
                             <rect x="200" y="200" width="180" height="120" rx="16" fill="#38bdf8" opacity="0.95"/>
                         </g>
-                    </svg>
-                `
-            },
-            logoll: {
-                name: 'Logoll overlay',
-                opacity: 0.25,
-                svg: `
-                    <svg width="68" height="118" viewBox="0 0 68 118" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M23.1173 64.2755C28.8872 64.2756 33.3609 65.4045 36.5314 67.6691H36.5304C39.7555 69.8863 41.3664 73.2127 41.3664 77.6388C41.3663 80.5792 40.7005 83.0159 39.3644 84.9445C38.0548 86.8347 36.1039 88.2307 33.5177 89.1378C36.3618 90.0005 38.7233 91.4914 40.5998 93.6144H40.6007C42.5169 95.7323 43.4718 98.6042 43.4718 102.223C43.4718 105.088 42.8433 107.554 41.5841 109.619L41.5832 109.62C40.3245 111.634 38.612 113.144 36.4474 114.151L36.4484 114.152C34.3392 115.156 32.1537 115.883 29.8937 116.335L29.8947 116.336C27.6853 116.788 25.3006 117.014 22.7414 117.014H0.0558167V64.2755H23.1173ZM11.3693 107.731H22.591C25.5428 107.731 27.8623 107.254 29.5548 106.309C31.2355 105.37 32.0832 103.614 32.0832 101.02C32.0831 98.7778 31.3425 97.1043 29.8683 95.9894C28.3912 94.8723 26.169 94.3098 23.1925 94.3097H11.3693V107.731ZM11.4445 85.5519H22.7414C24.9379 85.5518 26.7041 85.0528 28.0451 84.0597L28.2873 83.8595C29.4632 82.8319 30.0529 81.4119 30.0529 79.5929C30.0528 77.6019 29.3942 76.1167 28.0832 75.1271C26.7689 74.1352 24.7907 73.6349 22.1398 73.6349H11.4445V85.5519ZM11.4445 0.0558014V42.5333H37.2316V52.7941H0.0558167V0.0558014H11.4445ZM67.0529 10.8097L67.1076 10.8214C66.8123 12.2767 66.4272 13.5757 65.9513 14.7179L58.6886 33.5109H67.1086V42.9454H55.1115L51.216 52.7589L51.2023 52.7941H39.4279L39.4591 52.7169L60.9611 0.0899811L60.9757 0.0558014H67.1086V10.8214L67.0529 10.8097ZM67.1086 116.855L67.05 116.851C61.006 116.455 55.5631 114.908 50.7228 112.209L50.6945 112.193V101.307L50.7804 101.363C55.7365 104.638 61.1618 106.464 67.0568 106.843L67.1086 106.847V116.855ZM67.1086 93.7579L67.0343 93.7306C66.3049 93.4626 65.5562 93.1832 64.7892 92.8917L64.7873 92.8908C62.3302 91.8879 60.023 90.835 57.8664 89.7316L57.8654 89.7306C55.7519 88.5732 53.966 86.913 52.508 84.7511V84.7501C51.0979 82.5848 50.3937 80.0425 50.3937 77.1261C50.3938 72.2483 52.2304 68.5218 55.9054 65.9542C58.9725 63.8115 62.688 62.5647 67.049 62.213L67.1086 62.2081V72.4445L67.0627 72.4523C65.3678 72.7595 64.1043 73.2926 63.2648 74.046C62.4273 74.7977 62.008 75.7725 62.008 76.9757C62.008 78.3568 62.6967 79.5697 64.089 80.6144C64.9648 81.2486 65.9606 81.8103 67.0753 82.299L67.1086 82.3136V93.7579Z" fill="white" stroke="#0E0615" stroke-width="0.111472"/>
                     </svg>
                 `
             }
@@ -2307,8 +2305,15 @@
             if (viewBox) {
                 const parts = viewBox.split(' ');
                 if (parts.length >= 4) {
-                    svgWidth = parseFloat(parts[2]);
-                    svgHeight = parseFloat(parts[3]);
+                    const parsedWidth = parseFloat(parts[2]);
+                    const parsedHeight = parseFloat(parts[3]);
+                    // Validate that parseFloat returned actual numbers before using them
+                    if (!isNaN(parsedWidth) && isFinite(parsedWidth)) {
+                        svgWidth = parsedWidth;
+                    }
+                    if (!isNaN(parsedHeight) && isFinite(parsedHeight)) {
+                        svgHeight = parsedHeight;
+                    }
                 }
             }
 
@@ -2365,7 +2370,7 @@
                     
                     // Calculate scale factors and store them for repositioning
                     // Use stored values if available (for repositioning), otherwise calculate
-                    let scaleX, scaleY, vbX = 0, vbY = 0;
+                    let scaleX, scaleY, vbX = 0, vbY = 0, vbWidth, vbHeight;
                     const patternViewBox = sourceSvg.getAttribute('viewBox');
                     
                     if (imageData.patternScaleX && imageData.patternScaleY) {
@@ -2381,9 +2386,12 @@
                             if (parts.length >= 4) {
                                 vbX = parseFloat(parts[0]) || 0;
                                 vbY = parseFloat(parts[1]) || 0;
-                                const vbWidth = parseFloat(parts[2]);
-                                const vbHeight = parseFloat(parts[3]);
-                                if (vbWidth && vbHeight) {
+                                const parsedWidth = parseFloat(parts[2]);
+                                const parsedHeight = parseFloat(parts[3]);
+                                // Validate that parseFloat returned actual numbers before using them
+                                if (!isNaN(parsedWidth) && !isNaN(parsedHeight) && isFinite(parsedWidth) && isFinite(parsedHeight) && parsedWidth > 0 && parsedHeight > 0) {
+                                    vbWidth = parsedWidth;
+                                    vbHeight = parsedHeight;
                                     scaleX = width / vbWidth;
                                     scaleY = height / vbHeight;
                                 } else {
@@ -2701,6 +2709,14 @@
         function updateColorFromPicker(hexColor) {
             state.color = hexColor;
             updateColorUI(hexColor, null);
+            // Update gradient inputs to default to selected color
+            const gradientStart = document.getElementById('gradient-start');
+            const gradientEnd = document.getElementById('gradient-end');
+            if (gradientStart && gradientEnd) {
+                gradientStart.value = hexColor;
+                gradientEnd.value = hexColor;
+                updateGradient();
+            }
             updateCarColor();
         }
 
@@ -2714,6 +2730,14 @@
             if (/^#[0-9A-Fa-f]{3}$/.test(hex) || /^#[0-9A-Fa-f]{6}$/.test(hex)) {
                 state.color = hex;
                 updateColorUI(hex, null, true);
+                // Update gradient inputs to default to selected color
+                const gradientStart = document.getElementById('gradient-start');
+                const gradientEnd = document.getElementById('gradient-end');
+                if (gradientStart && gradientEnd) {
+                    gradientStart.value = hex;
+                    gradientEnd.value = hex;
+                    updateGradient();
+                }
                 updateCarColor();
             }
         }
@@ -2800,6 +2824,14 @@
             state.color = color;
             state.isGradient = false;
             updateColorUI(color, element);
+            // Update gradient inputs to default to selected color
+            const gradientStart = document.getElementById('gradient-start');
+            const gradientEnd = document.getElementById('gradient-end');
+            if (gradientStart && gradientEnd) {
+                gradientStart.value = color;
+                gradientEnd.value = color;
+                updateGradient();
+            }
             // Update the SVG color
             updateCarColor();
         }
@@ -2922,12 +2954,26 @@
             if (viewBox) {
                 const parts = viewBox.split(' ');
                 if (parts.length >= 4) {
-                    width = parseFloat(parts[2]) || width;
-                    height = parseFloat(parts[3]) || height;
+                    const parsedWidth = parseFloat(parts[2]);
+                    const parsedHeight = parseFloat(parts[3]);
+                    // Validate that parseFloat returned actual numbers before using them
+                    if (!isNaN(parsedWidth) && isFinite(parsedWidth)) {
+                        width = parsedWidth;
+                    }
+                    if (!isNaN(parsedHeight) && isFinite(parsedHeight)) {
+                        height = parsedHeight;
+                    }
                 }
             } else {
-                width = parseFloat(svgElement.getAttribute('width')) || width;
-                height = parseFloat(svgElement.getAttribute('height')) || height;
+                const parsedWidth = parseFloat(svgElement.getAttribute('width'));
+                const parsedHeight = parseFloat(svgElement.getAttribute('height'));
+                // Validate that parseFloat returned actual numbers before using them
+                if (!isNaN(parsedWidth) && isFinite(parsedWidth)) {
+                    width = parsedWidth;
+                }
+                if (!isNaN(parsedHeight) && isFinite(parsedHeight)) {
+                    height = parsedHeight;
+                }
             }
 
             // Store SVG string directly for patterns (not as blob URL)
@@ -3188,7 +3234,7 @@
         }
 
         function updatePricing() {
-            const basePrice = 5;
+            const basePrice = 20;
             const filesPrice = state.files.length * 1;
             const protectedWrapPrice = state.protectedWrap ? 2 : 0;
 
